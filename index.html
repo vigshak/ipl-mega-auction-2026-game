@@ -1,855 +1,839 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.2">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL 2026 Mega Auction - Official Edition</title>
+    <style>
+        /* ================= THEME ENGINE ================= */
+        :root {
+            /* Default: IPL Official Theme */
+            --bg-dark: #f0f2f5; /* Light Broadcast Gray */
+            --bg-panel: #ffffff; /* Clean White */
+            --bg-secondary: #1d428a; /* IPL Blue */
+            --accent-primary: #f37021; /* IPL Orange */
+            --accent-secondary: #00d26a; /* Success Green */
+            --accent-danger: #d32f2f; /* Red */
+            --text-main: #1d428a; /* Dark Blue Text */
+            --text-muted: #555555;
+            --font-family: 'Segoe UI', system-ui, sans-serif;
+            --shadow-med: 0 10px 25px rgba(29, 66, 138, 0.15);
+            --glass: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            --border-color: #e0e0e0;
+        }
+
+        /* Dark Themes Override */
+        [data-theme="midnight"] {
+            --bg-dark: #121418; --bg-panel: #1e2029; --bg-secondary: #2a2d3a;
+            --accent-primary: #f9cd05; --accent-secondary: #00d26a; --accent-danger: #ff4b4b;
+            --text-main: #ffffff; --text-muted: #8e9bb4; --border-color: rgba(255,255,255,0.1);
+            --glass: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+        }
+        [data-theme="cyberpunk"] {
+            --bg-dark: #05000a; --bg-panel: #130024; --bg-secondary: #240046;
+            --accent-primary: #00f3ff; --accent-secondary: #d000ff; --accent-danger: #ff003c;
+            --text-main: #e0faff; --text-muted: #b98aff; --border-color: #00f3ff;
+            --glass: linear-gradient(145deg, rgba(0, 243, 255, 0.1), rgba(0,0,0,0.8));
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); user-select: none; }
+        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; perspective: 1200px; transition: background 0.3s; }
+
+        /* Sidebar */
+        .sidebar { width: 80px; background: var(--bg-panel); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid var(--border-color); box-shadow: 5px 0 15px rgba(0,0,0,0.05); z-index: 50; }
+        .nav-icon { width: 50px; height: 50px; margin-bottom: 25px; border-radius: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #fff; font-size: 24px; background: var(--bg-secondary); box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s; }
+        .nav-icon:active { transform: translateY(2px); }
+        .nav-icon:hover { background: var(--accent-primary); transform: scale(1.05); }
+
+        /* Volume Slider */
+        .volume-control { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.05); padding: 10px 5px; border-radius: 20px; }
+        input[type=range][orient=vertical] { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 8px; height: 80px; cursor: pointer; }
+
+        /* Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .top-bar { height: 70px; background: var(--bg-secondary); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 40; }
+        .logo-area { font-weight: 900; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 12px; letter-spacing: 1px; }
+        .logo-area img { height: 45px; background: #fff; border-radius: 50%; padding: 2px; }
+        .stats-area { display: flex; gap: 20px; }
+        .stat-box { text-align: right; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 8px; backdrop-filter: blur(5px); }
+        .stat-label { font-size: 0.65rem; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+        .stat-value { font-size: 1.1rem; font-weight: bold; font-family: 'Courier New', monospace; color: #fff; }
+
+        .arena { flex: 1; display: flex; padding: 25px; gap: 25px; overflow: hidden; position: relative; }
+        /* IPL Background Graphic */
+        .arena::before {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.05; pointer-events: none;
+        }
+
+        .center-stage { flex: 2; display: flex; flex-direction: column; gap: 20px; min-width: 300px; perspective: 1000px; height: 100%; }
+
+        /* Player Card */
+        .player-card { 
+            flex: 1; background: var(--bg-panel); background-image: var(--glass); 
+            border-radius: 20px; display: flex; overflow: hidden; position: relative; 
+            box-shadow: var(--shadow-med); border: 1px solid var(--border-color); 
+            max-height: 100%; transform: rotateX(0deg); transition: transform 0.3s;
+        }
+        .player-img-section { 
+            width: 45%; background: linear-gradient(to bottom, #cfd9df 0%, #e2ebf0 100%); 
+            display: flex; align-items: flex-end; justify-content: center; overflow: hidden; position: relative; 
+        }
+        .player-img-section img { 
+            width: 100%; height: 100%; object-fit: cover; object-position: top;
+            transition: transform 0.5s; 
+        }
+        .player-card:hover .player-img-section img { transform: scale(1.05); }
+        
+        .player-info { padding: 25px; flex: 1; display: flex; flex-direction: column; position: relative; }
+        .set-badge { background: var(--bg-secondary); color: #fff; padding: 6px 14px; border-radius: 4px; font-size: 0.75rem; align-self: flex-start; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; }
+        .player-name { font-size: 2.8rem; font-weight: 900; line-height: 1; margin-bottom: 8px; text-transform: uppercase; color: var(--text-main); }
+        .player-meta { display: flex; gap: 10px; margin-bottom: 15px; font-size: 1.1rem; color: var(--text-muted); align-items: center; }
+        .role-tag { background: var(--accent-primary); color: #000; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+
+        /* Bid Dashboard */
+        .bid-display { background: #222; border-radius: 12px; padding: 20px; text-align: center; margin-top: auto; border: 4px solid var(--accent-primary); box-shadow: inset 0 0 20px #000; position: relative; color: #fff; }
+        .current-holder { font-size: 1.2rem; color: #aaa; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 40px; }
+        .holder-logo { height: 35px; background: #fff; border-radius: 50%; padding: 2px; }
+        .current-price { font-size: 4.5rem; font-weight: 800; color: var(--accent-primary); line-height: 1; font-family: 'Courier New', monospace; text-shadow: 0 0 15px var(--accent-primary); }
+        .timer-bar { height: 8px; background: #444; border-radius: 4px; margin-top: 15px; overflow: hidden; }
+        .timer-fill { height: 100%; background: var(--accent-secondary); width: 100%; transition: width 0.1s linear; }
+        .timer-fill.critical { background: var(--accent-danger); box-shadow: 0 0 10px var(--accent-danger); }
+
+        /* Controls */
+        .controls { height: 80px; background: var(--bg-panel); border-radius: 16px; display: flex; align-items: center; padding: 0 15px; gap: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-med); flex-shrink: 0; }
+        .btn { border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; height: 50px; font-size: 0.9rem; position: relative; transition: all 0.1s; color: #fff; }
+        .btn:active { transform: translateY(2px); }
+        
+        .btn-pass { flex: 0.6; background: #555; color: #ccc; }
+        .btn-pause { flex: 0.6; background: var(--bg-secondary); color: #fff; }
+        .btn-sim { flex: 0.8; background: #f0f0f0; color: #333; display:flex; flex-direction: column; justify-content: center; line-height:1.2; font-size: 0.7rem; border: 1px solid #ccc; }
+        .btn-sim:hover { background: #e0e0e0; }
+        .btn-bid { flex: 2; background: linear-gradient(to bottom, #ff9800, #f57c00); color: #fff; font-size: 1.5rem; font-weight: 900; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1; box-shadow: 0 4px 0 #e65100; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .btn-bid:active { box-shadow: 0 0 0; transform: translateY(4px); }
+        .btn-next { flex: 1; background: var(--accent-secondary); color: #fff; display: none; }
+
+        /* Feed */
+        .right-panel { flex: 1; min-width: 300px; max-width: 350px; background: var(--bg-panel); border-radius: 16px; border: 1px solid var(--border-color); display: flex; flex-direction: column; box-shadow: var(--shadow-med); overflow: hidden; height: 100%; }
+        .panel-header { padding: 15px; background: var(--bg-secondary); font-weight: bold; text-align: center; color: #fff; }
+        .feed-list { flex: 1; height: 0; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.02); }
+        .feed-item { background: var(--bg-panel); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-left: 4px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .feed-item.user-bid { border-left-color: var(--accent-primary); background: #fff8e1; }
+        .feed-logo { height: 24px; vertical-align: middle; margin-right: 8px; }
+        .event-text { color: var(--accent-danger); font-weight: bold; font-style: italic; animation: pulse 1s infinite; width:100%; text-align:center;}
+
+        /* Stamp & Modals */
+        .stamp { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(3) rotate(-15deg); font-size: 3rem; font-weight: 900; color: var(--accent-danger); border: 8px solid var(--accent-danger); padding: 8px 30px; opacity: 0; pointer-events: none; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: rgba(255,255,255,0.9); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .stamp.active { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
+        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-panel); width: 90%; height: 90%; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .modal-header { padding: 15px; background: var(--bg-secondary); display: flex; justify-content: space-between; align-items: center; color: #fff; }
+        .modal-body { padding: 20px; overflow-y: auto; background: var(--bg-dark); }
+        .close-btn { background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+
+        /* Retention Specifics */
+        #retention-screen { display: flex; flex-direction: column; height: 100%; }
+        .ret-container { flex: 1; display: flex; gap: 20px; padding: 20px; overflow: hidden; }
+        .ret-col { display: flex; flex-direction: column; background: var(--bg-panel); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); height: 100%; overflow: hidden; box-shadow: var(--shadow-med); }
+        .ret-list { flex: 1; overflow-y: auto; margin-top: 10px; padding-right: 5px; }
+        .ret-item { padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--border-color); margin-bottom: 8px; background: var(--bg-dark); color: var(--text-main); transition: 0.2s; }
+        .ret-item:hover { background: #e3f2fd; }
+        .ret-item.selected { background: #fff3e0; border-left: 5px solid var(--accent-primary); border-color: var(--accent-primary); }
+        
+        /* Squads Grid */
+        .squads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
+        .team-box { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; max-height: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .team-header { padding: 10px; font-weight: bold; color: #000; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; color: #fff; }
+        .team-header img { height: 28px; background: #fff; border-radius: 50%; padding: 2px; }
+        .player-list { padding: 10px; overflow-y: auto; flex: 1; background: var(--bg-dark); }
+        .p-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--text-main); }
+        .p-price { color: var(--accent-secondary); font-weight:bold; }
+
+        /* Sets */
+        .set-group { margin-bottom: 20px; }
+        .set-title-bar { background: var(--bg-secondary); padding: 10px 15px; border-radius: 8px 8px 0 0; color: #fff; font-weight: bold; border-left: 5px solid var(--accent-primary); }
+        .set-grid-body { background: var(--bg-panel); padding: 15px; border-radius: 0 0 8px 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; border: 1px solid var(--border-color); }
+        .set-card-p { background: var(--bg-dark); padding: 10px; border-radius: 6px; font-size: 0.9rem; color: var(--text-main); border: 1px solid var(--border-color); }
+
+        /* Theme Menu */
+        #theme-menu { position: absolute; bottom: 80px; left: 90px; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 10px; border-radius: 12px; display: none; flex-direction: column; gap: 8px; z-index: 60; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #theme-menu.active { display: flex; }
+        .theme-btn { padding: 10px 15px; border: 1px solid var(--border-color); background: var(--bg-dark); color: var(--text-main); cursor: pointer; border-radius: 6px; text-align: left; }
+        .theme-btn:hover { background: var(--accent-primary); color: #fff; border-color: var(--accent-primary); }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;IPL 2026 Mega Auction - Official Edition&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* ================= THEME ENGINE ================= */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>:root {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>/* Default: IPL Official Theme */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--bg-dark: #f0f2f5; /* Light Broadcast Gray */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--bg-panel: #ffffff; /* Clean White */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--bg-secondary: #1d428a; /* IPL Blue */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--accent-primary: #f37021; /* IPL Orange */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--accent-secondary: #00d26a; /* Success Green */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--accent-danger: #d32f2f; /* Red */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--text-main: #1d428a; /* Dark Blue Text */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--text-muted: #555555;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--font-family: 'Segoe UI', system-ui, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--shadow-med: 0 10px 25px rgba(29, 66, 138, 0.15);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--glass: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--border-color: #e0e0e0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Dark Themes Override */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>[data-theme="midnight"] {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--bg-dark: #121418; --bg-panel: #1e2029; --bg-secondary: #2a2d3a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--accent-primary: #f9cd05; --accent-secondary: #00d26a; --accent-danger: #ff4b4b;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--text-main: #ffffff; --text-muted: #8e9bb4; --border-color: rgba(255,255,255,0.1);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--glass: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>[data-theme="cyberpunk"] {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--bg-dark: #05000a; --bg-panel: #130024; --bg-secondary: #240046;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--accent-primary: #00f3ff; --accent-secondary: #d000ff; --accent-danger: #ff003c;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--text-main: #e0faff; --text-muted: #b98aff; --border-color: #00f3ff;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>--glass: linear-gradient(145deg, rgba(0, 243, 255, 0.1), rgba(0,0,0,0.8));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>* { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); user-select: none; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; perspective: 1200px; transition: background 0.3s; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Sidebar */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.sidebar { width: 80px; background: var(--bg-panel); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid var(--border-color); box-shadow: 5px 0 15px rgba(0,0,0,0.05); z-index: 50; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-icon { width: 50px; height: 50px; margin-bottom: 25px; border-radius: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #fff; font-size: 24px; background: var(--bg-secondary); box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-icon:active { transform: translateY(2px); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-icon:hover { background: var(--accent-primary); transform: scale(1.05); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Volume Slider */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.volume-control { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.05); padding: 10px 5px; border-radius: 20px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>input[type=range][orient=vertical] { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 8px; height: 80px; cursor: pointer; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Main Content */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.top-bar { height: 70px; background: var(--bg-secondary); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 40; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.logo-area { font-weight: 900; font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 12px; letter-spacing: 1px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.logo-area img { height: 45px; background: #fff; border-radius: 50%; padding: 2px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stats-area { display: flex; gap: 20px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stat-box { text-align: right; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 8px; backdrop-filter: blur(5px); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stat-label { font-size: 0.65rem; color: rgba(255,255,255,0.7); text-transform: uppercase; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stat-value { font-size: 1.1rem; font-weight: bold; font-family: 'Courier New', monospace; color: #fff; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.arena { flex: 1; display: flex; padding: 25px; gap: 25px; overflow: hidden; position: relative; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* IPL Background Graphic */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.arena::before {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>content: ''; position: absolute; top:0; left:0; width:100%; height:100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.05; pointer-events: none;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.center-stage { flex: 2; display: flex; flex-direction: column; gap: 20px; min-width: 300px; perspective: 1000px; height: 100%; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Player Card */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-card {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex: 1; background: var(--bg-panel); background-image: var(--glass);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 20px; display: flex; overflow: hidden; position: relative;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: var(--shadow-med); border: 1px solid var(--border-color);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-height: 100%; transform: rotateX(0deg); transition: transform 0.3s;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-img-section {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 45%; background: linear-gradient(to bottom, #cfd9df 0%, #e2ebf0 100%);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex; align-items: flex-end; justify-content: center; overflow: hidden; position: relative;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-img-section img {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%; height: 100%; object-fit: cover; object-position: top;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: transform 0.5s;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-card:hover .player-img-section img { transform: scale(1.05); }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-info { padding: 25px; flex: 1; display: flex; flex-direction: column; position: relative; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.set-badge { background: var(--bg-secondary); color: #fff; padding: 6px 14px; border-radius: 4px; font-size: 0.75rem; align-self: flex-start; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-name { font-size: 2.8rem; font-weight: 900; line-height: 1; margin-bottom: 8px; text-transform: uppercase; color: var(--text-main); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-meta { display: flex; gap: 10px; margin-bottom: 15px; font-size: 1.1rem; color: var(--text-muted); align-items: center; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.role-tag { background: var(--accent-primary); color: #000; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Bid Dashboard */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.bid-display { background: #222; border-radius: 12px; padding: 20px; text-align: center; margin-top: auto; border: 4px solid var(--accent-primary); box-shadow: inset 0 0 20px #000; position: relative; color: #fff; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.current-holder { font-size: 1.2rem; color: #aaa; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 40px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.holder-logo { height: 35px; background: #fff; border-radius: 50%; padding: 2px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.current-price { font-size: 4.5rem; font-weight: 800; color: var(--accent-primary); line-height: 1; font-family: 'Courier New', monospace; text-shadow: 0 0 15px var(--accent-primary); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.timer-bar { height: 8px; background: #444; border-radius: 4px; margin-top: 15px; overflow: hidden; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.timer-fill { height: 100%; background: var(--accent-secondary); width: 100%; transition: width 0.1s linear; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.timer-fill.critical { background: var(--accent-danger); box-shadow: 0 0 10px var(--accent-danger); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Controls */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.controls { height: 80px; background: var(--bg-panel); border-radius: 16px; display: flex; align-items: center; padding: 0 15px; gap: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-med); flex-shrink: 0; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn { border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; height: 50px; font-size: 0.9rem; position: relative; transition: all 0.1s; color: #fff; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn:active { transform: translateY(2px); }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-pass { flex: 0.6; background: #555; color: #ccc; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-pause { flex: 0.6; background: var(--bg-secondary); color: #fff; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-sim { flex: 0.8; background: #f0f0f0; color: #333; display:flex; flex-direction: column; justify-content: center; line-height:1.2; font-size: 0.7rem; border: 1px solid #ccc; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-sim:hover { background: #e0e0e0; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-bid { flex: 2; background: linear-gradient(to bottom, #ff9800, #f57c00); color: #fff; font-size: 1.5rem; font-weight: 900; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1; box-shadow: 0 4px 0 #e65100; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-bid:active { box-shadow: 0 0 0; transform: translateY(4px); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-next { flex: 1; background: var(--accent-secondary); color: #fff; display: none; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Feed */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.right-panel { flex: 1; min-width: 300px; max-width: 350px; background: var(--bg-panel); border-radius: 16px; border: 1px solid var(--border-color); display: flex; flex-direction: column; box-shadow: var(--shadow-med); overflow: hidden; height: 100%; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.panel-header { padding: 15px; background: var(--bg-secondary); font-weight: bold; text-align: center; color: #fff; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.feed-list { flex: 1; height: 0; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.02); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.feed-item { background: var(--bg-panel); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-left: 4px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.feed-item.user-bid { border-left-color: var(--accent-primary); background: #fff8e1; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.feed-logo { height: 24px; vertical-align: middle; margin-right: 8px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.event-text { color: var(--accent-danger); font-weight: bold; font-style: italic; animation: pulse 1s infinite; width:100%; text-align:center;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Stamp &amp; Modals */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stamp { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(3) rotate(-15deg); font-size: 3rem; font-weight: 900; color: var(--accent-danger); border: 8px solid var(--accent-danger); padding: 8px 30px; opacity: 0; pointer-events: none; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: rgba(255,255,255,0.9); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.stamp.active { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal.active { display: flex; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal-content { background: var(--bg-panel); width: 90%; height: 90%; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal-header { padding: 15px; background: var(--bg-secondary); display: flex; justify-content: space-between; align-items: center; color: #fff; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal-body { padding: 20px; overflow-y: auto; background: var(--bg-dark); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.close-btn { background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Retention Specifics */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#retention-screen { display: flex; flex-direction: column; height: 100%; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.ret-container { flex: 1; display: flex; gap: 20px; padding: 20px; overflow: hidden; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.ret-col { display: flex; flex-direction: column; background: var(--bg-panel); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); height: 100%; overflow: hidden; box-shadow: var(--shadow-med); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.ret-list { flex: 1; overflow-y: auto; margin-top: 10px; padding-right: 5px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.ret-item { padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--border-color); margin-bottom: 8px; background: var(--bg-dark); color: var(--text-main); transition: 0.2s; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.ret-item:hover { background: #e3f2fd; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.ret-item.selected { background: #fff3e0; border-left: 5px solid var(--accent-primary); border-color: var(--accent-primary); }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Squads Grid */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.squads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.team-box { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; max-height: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.team-header { padding: 10px; font-weight: bold; color: #000; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; color: #fff; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.team-header img { height: 28px; background: #fff; border-radius: 50%; padding: 2px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.player-list { padding: 10px; overflow-y: auto; flex: 1; background: var(--bg-dark); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.p-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--text-main); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.p-price { color: var(--accent-secondary); font-weight:bold; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Sets */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.set-group { margin-bottom: 20px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.set-title-bar { background: var(--bg-secondary); padding: 10px 15px; border-radius: 8px 8px 0 0; color: #fff; font-weight: bold; border-left: 5px solid var(--accent-primary); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.set-grid-body { background: var(--bg-panel); padding: 15px; border-radius: 0 0 8px 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; border: 1px solid var(--border-color); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.set-card-p { background: var(--bg-dark); padding: 10px; border-radius: 6px; font-size: 0.9rem; color: var(--text-main); border: 1px solid var(--border-color); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Theme Menu */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#theme-menu { position: absolute; bottom: 80px; left: 90px; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 10px; border-radius: 12px; display: none; flex-direction: column; gap: 8px; z-index: 60; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#theme-menu.active { display: flex; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.theme-btn { padding: 10px 15px; border: 1px solid var(--border-color); background: var(--bg-dark); color: var(--text-main); cursor: pointer; border-radius: 6px; text-align: left; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.theme-btn:hover { background: var(--accent-primary); color: #fff; border-color: var(--accent-primary); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;audio id="bg-music" loop&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;source id="audio-src" src="https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3" type="audio/mp3"&gt;</p>
-<p class="p1">&lt;/audio&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div id="theme-menu"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="theme-btn" onclick="ui.setTheme('default')"&gt;IPL Official (Default)&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="theme-btn" onclick="ui.setTheme('midnight')"&gt;Midnight Dark&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="theme-btn" onclick="ui.setTheme('cyberpunk')"&gt;Cyberpunk Neon&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="theme-btn" onclick="ui.setTheme('royal')"&gt;Royal Gold&lt;/button&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="sidebar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="nav-icon" onclick="game.openSquads()" title="View Squads"&gt;👥&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="nav-icon" onclick="showModal('sets-modal')" title="Auction Order"&gt;📜&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="nav-icon" onclick="ui.toggleThemeMenu()" title="Change Theme"&gt;🎨&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="volume-control"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="nav-icon" id="music-switch-btn" onclick="audioManager.nextTrack()" title="Change Music" style="margin-bottom:5px; background:var(--accent-primary); font-size:18px;"&gt;🎵&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="nav-icon" id="mute-btn" onclick="audioManager.toggleMute()" title="Mute Music" style="margin-bottom:5px; background:transparent; box-shadow:none;"&gt;🔊&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="range" id="vol-slider" orient="vertical" min="0" max="1" step="0.1" value="0.5" oninput="audioManager.setVolume(this.value)" title="Volume"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="main-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="top-bar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="logo-area"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;img src="https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Chennai_Super_Kings_Logo.svg/1200px-Chennai_Super_Kings_Logo.svg.png" alt="CSK"&gt;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>CHENNAI SUPER KINGS</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="stats-area"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="stat-box"&gt;&lt;div class="stat-label"&gt;Purse Left&lt;/div&gt;&lt;div class="stat-value" id="user-purse"&gt;₹120.00 Cr&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="stat-box"&gt;&lt;div class="stat-label"&gt;Squad&lt;/div&gt;&lt;div class="stat-value"&gt;&lt;span id="squad-count"&gt;0&lt;/span&gt;/25&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="stat-box"&gt;&lt;div class="stat-label"&gt;Overseas&lt;/div&gt;&lt;div class="stat-value"&gt;&lt;span id="os-count"&gt;0&lt;/span&gt;/8&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="arena"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="center-stage"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="player-card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stamp" id="sold-stamp"&gt;SOLD &lt;small id="sold-sub"&gt;to MI&lt;/small&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="player-img-section"&gt;&lt;img id="p-img" src="" alt="Player"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="player-info"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="set-badge" id="p-set"&gt;SET 1&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="player-name" id="p-name"&gt;Loading...&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="player-meta"&gt;&lt;span class="role-tag" id="p-role"&gt;BAT&lt;/span&gt; &lt;span id="p-country"&gt;🇮🇳 India&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bid-display"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="current-holder" id="bid-leader"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;img src="" class="holder-logo" id="leader-logo" style="display:none"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span id="leader-text"&gt;Waiting...&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="current-price" id="bid-price"&gt;₹ 2.00 Cr&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="timer-bar"&gt;&lt;div class="timer-fill" id="timer-bar"&gt;&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="controls"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-pause" id="btn-pause" onclick="game.togglePause()"&gt;⏸&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-pass" id="btn-pass" onclick="game.pass()"&gt;PASS&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-sim" id="btn-sim-player" onclick="game.quickSim()" title="Simulate Result for Current Player"&gt;&lt;span&gt;⚡&lt;/span&gt; SIM PLAYER&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-sim" id="btn-sim-set" onclick="game.simSet()" title="Simulate Rest of Current Set"&gt;&lt;span&gt;⏩&lt;/span&gt; SIM SET&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-bid" id="btn-bid"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="btn-main-text"&gt;BID NOW&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span id="btn-bid-amt" style="font-weight:normal; font-size:0.8rem; opacity:0.8"&gt;₹ 2.00 Cr&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-next" id="btn-next"&gt;Next Player ➔&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="right-panel"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="panel-header"&gt;LIVE FEED&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="feed-list" id="feed-list"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="modal active" id="retention-modal"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="modal-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="retention-screen"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="modal-header"&gt;&lt;h3&gt;IPL 2026: PRE-AUCTION RETENTION&lt;/h3&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="ret-container" id="ret-select-view"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="ret-col" style="flex:2;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style="margin-bottom:10px; font-size:1.2rem; font-weight:bold; color:var(--text-main);"&gt;Your Squad (CSK)&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style="margin-bottom:10px; font-size:0.8rem; color:var(--text-muted);"&gt;Select Max 5 Capped, Max 2 Uncapped. (Total 6)&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="ret-list" id="csk-roster-list"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="ret-col" style="flex:1; max-width:300px; justify-content:space-between;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style="background:var(--bg-secondary); padding:20px; border-radius:12px; text-align:center; color:#fff;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style="font-size:0.9rem; opacity:0.8;"&gt;Players Selected&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style="font-size:2rem; font-weight:bold;" id="ret-count-disp"&gt;0/6&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style="font-size:0.9rem; opacity:0.8;"&gt;Total Cost&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style="font-size:2rem; font-weight:bold; color:var(--accent-primary);" id="ret-cost-disp"&gt;₹0 Cr&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style="font-size:0.9rem; opacity:0.8;"&gt;Remaining Purse&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style="font-size:1.5rem; font-weight:bold; color:var(--accent-secondary);" id="ret-purse-disp"&gt;₹120.00 Cr&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="btn-bid" style="width:100%; border-radius:8px; height:60px;" onclick="retentionManager.confirmRetentions()"&gt;CONFIRM &amp; START&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="ret-summary-screen" id="ret-result-view" style="display:none; flex-direction:column; align-items:center; padding:30px; overflow-y:auto;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h1 style="color:var(--text-main); margin-bottom:20px;"&gt;RETENTIONS CONFIRMED&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="squads-grid" id="ai-ret-grid" style="width:100%;"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn-bid" style="margin-top:30px; width:300px; padding:15px; border-radius:8px;" onclick="retentionManager.startAuction()"&gt;ENTER AUCTION ARENA&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="modal" id="squads-modal"&gt;&lt;div class="modal-content"&gt;&lt;div class="modal-header"&gt;&lt;h3&gt;Team Squads&lt;/h3&gt;&lt;button class="close-btn" onclick="closeModal('squads-modal')"&gt;&amp;times;&lt;/button&gt;&lt;/div&gt;&lt;div class="modal-body"&gt;&lt;div class="squads-grid" id="squads-container"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1">&lt;div class="modal" id="sets-modal"&gt;&lt;div class="modal-content"&gt;&lt;div class="modal-header"&gt;&lt;h3&gt;Auction Order&lt;/h3&gt;&lt;button class="close-btn" onclick="closeModal('sets-modal')"&gt;&amp;times;&lt;/button&gt;&lt;/div&gt;&lt;div class="modal-body"&gt;&lt;div id="sets-list-container"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// ================= AUDIO MANAGER =================</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const audioManager = {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tracks: [</p>
-<p class="p1"><span class="Apple-converted-space">            </span>"https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3", // Tense</p>
-<p class="p1"><span class="Apple-converted-space">            </span>"https://codeskulptor-demos.commondatastorage.googleapis.com/pang/paza-moduless.mp3", // Chill</p>
-<p class="p1"><span class="Apple-converted-space">            </span>"https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg" // Action</p>
-<p class="p1"><span class="Apple-converted-space">        </span>],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>currentTrack: 0,</p>
-<p class="p1"><span class="Apple-converted-space">        </span>isMuted: false,</p>
-<p class="p1"><span class="Apple-converted-space">        </span>init: () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const aud = document.getElementById('bg-music');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>aud.volume = 0.5;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>startMusic: () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const aud = document.getElementById('bg-music');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(aud.paused) { aud.play().catch(e =&gt; console.log("Audio waiting for interaction")); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>nextTrack: () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const aud = document.getElementById('bg-music');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>audioManager.currentTrack = (audioManager.currentTrack + 1) % audioManager.tracks.length;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('audio-src').src = audioManager.tracks[audioManager.currentTrack];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>aud.load();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!audioManager.isMuted) aud.play();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>toggleMute: () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const aud = document.getElementById('bg-music');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const btn = document.getElementById('mute-btn');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>audioManager.isMuted = !audioManager.isMuted;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>aud.muted = audioManager.isMuted;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>btn.innerText = audioManager.isMuted ? "🔇" : "🔊";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!audioManager.isMuted &amp;&amp; aud.paused) aud.play();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setVolume: (val) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const aud = document.getElementById('bg-music');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>aud.volume = val;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>audioManager.init();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// ================= UI ENGINE =================</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ui = {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>toggleThemeMenu: () =&gt; { document.getElementById('theme-menu').classList.toggle('active'); },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setTheme: (theme) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(theme === 'default') document.documentElement.removeAttribute('data-theme');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>else document.documentElement.setAttribute('data-theme', theme);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('theme-menu').classList.remove('active');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// ================= DATA (FIXED LOGOS FOR RR, RCB, SRH, DC) =================</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const TEAMS = [</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'CSK', name: 'Chennai Super Kings', color: '#F9CD05', text: '#111', purse: 120, players: [], isUser: true, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Chennai_Super_Kings_Logo.svg/1200px-Chennai_Super_Kings_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'MI', name: 'Mumbai Indians', color: '#004BA0', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/c/cd/Mumbai_Indians_Logo.svg/1200px-Mumbai_Indians_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'RCB', name: 'Royal Challengers Bengaluru', color: '#EC1C24', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Royal_Challengers_Bangalore_2020.svg/1200px-Royal_Challengers_Bangalore_2020.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'KKR', name: 'Kolkata Knight Riders', color: '#3A225D', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4c/Kolkata_Knight_Riders_Logo.svg/1200px-Kolkata_Knight_Riders_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'SRH', name: 'Sunrisers Hyderabad', color: '#F76D20', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/81/Sunrisers_Hyderabad.svg/1200px-Sunrisers_Hyderabad.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'DC', name: 'Delhi Capitals', color: '#0078BC', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/2/2f/Delhi_Capitals_Logo.svg/1200px-Delhi_Capitals_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'GT', name: 'Gujarat Titans', color: '#1B2133', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/0/09/Gujarat_Titans_Logo.svg/1200px-Gujarat_Titans_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'RR', name: 'Rajasthan Royals', color: '#EA1A85', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Rajasthan_Royals_Logo.svg/1200px-Rajasthan_Royals_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'PBKS', name: 'Punjab Kings', color: '#DD1F2D', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d4/Punjab_Kings_Logo.svg/1200px-Punjab_Kings_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 'LSG', name: 'Lucknow Super Giants', color: '#A0CEF5', text: '#000', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Lucknow_Super_Giants_IPL_Logo.svg/1200px-Lucknow_Super_Giants_IPL_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// PLAYER IMAGES</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const PLAYER_IMAGES = {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Virat Kohli": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"MS Dhoni": "https://upload.wikimedia.org/wikipedia/commons/c/c4/MS_Dhoni_in_2011.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Rohit Sharma": "https://upload.wikimedia.org/wikipedia/commons/1/12/Rohit_Sharma_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Jasprit Bumrah": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Jasprit_Bumrah_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Hardik Pandya": "https://upload.wikimedia.org/wikipedia/commons/9/95/Hardik_Pandya_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Ravindra Jadeja": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Ravindra_Jadeja_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Rishabh Pant": "https://upload.wikimedia.org/wikipedia/commons/3/30/Rishabh_Pant_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Shubman Gill": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Shubman_Gill_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Pat Cummins": "https://upload.wikimedia.org/wikipedia/commons/1/17/Pat_Cummins_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Mitchell Starc": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Mitchell_Starc_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Sanju Samson": "https://upload.wikimedia.org/wikipedia/commons/5/59/Sanju_Samson_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"KL Rahul": "https://upload.wikimedia.org/wikipedia/commons/6/69/KL_Rahul_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Ruturaj Gaikwad": "https://upload.wikimedia.org/wikipedia/commons/6/63/Ruturaj_Gaikwad_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Shreyas Iyer": "https://upload.wikimedia.org/wikipedia/commons/0/06/Shreyas_Iyer_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Suryakumar Yadav": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Suryakumar_Yadav_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Rashid Khan": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Rashid_Khan_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Jos Buttler": "https://upload.wikimedia.org/wikipedia/commons/6/69/Jos_Buttler_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Heinrich Klaasen": "https://upload.wikimedia.org/wikipedia/commons/0/05/Heinrich_Klaasen_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Travis Head": "https://upload.wikimedia.org/wikipedia/commons/6/69/Travis_Head_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Yashasvi Jaiswal": "https://upload.wikimedia.org/wikipedia/commons/2/22/Yashasvi_Jaiswal_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Rinku Singh": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Rinku_Singh_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Tilak Varma": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Tilak_Varma_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Abhishek Sharma": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Abhishek_Sharma_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Tristan Stubbs": "https://upload.wikimedia.org/wikipedia/commons/8/87/Tristan_Stubbs_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Axar Patel": "https://upload.wikimedia.org/wikipedia/commons/6/63/Axar_Patel_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Mohammed Siraj": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Mohammed_Siraj_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Mohammed Shami": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Mohammed_Shami_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Arshdeep Singh": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Arshdeep_Singh_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Kuldeep Yadav": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Kuldeep_Yadav_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Yuzvendra Chahal": "https://upload.wikimedia.org/wikipedia/commons/2/25/Yuzvendra_Chahal_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Ishan Kishan": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Ishan_Kishan_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"David Miller": "https://upload.wikimedia.org/wikipedia/commons/4/4e/David_Miller_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Glenn Maxwell": "https://upload.wikimedia.org/wikipedia/commons/6/69/Glenn_Maxwell_in_2023.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"Faf du Plessis": "https://upload.wikimedia.org/wikipedia/commons/5/52/Faf_du_Plessis_in_2023.jpg"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// HYPOTHETICAL 2026 ROSTERS FOR RETENTION</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ORIGINAL_ROSTERS = {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'CSK': ["MS Dhoni", "Ruturaj Gaikwad", "Sanju Samson", "Ayush Mhatre", "Dewald Brevis", "Urvil Patel", "Shivam Dube", "Noor Ahmad", "Nathan Ellis", "Shreyas Gopal", "Khaleel Ahmed", "Ramakrishna Ghosh", "Mukesh Choudhary", "Jamie Overton", "Gurjapneet Singh", "Anshul Kamboj", "Prashant Veer", "Kartik Sharma", "Rahul Chahar", "Akeal Hosein", "Matt Henry", "Matthew Short", "Sarfaraz Khan", "Zak Foulkes", "Aman Khan"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'DC': ["KL Rahul", "Nitish Rana", "Abishek Porel", "Ajay Mandal", "Ashutosh Sharma", "Axar Patel", "Dushmantha Chameera", "Karun Nair", "Kuldeep Yadav", "Madhav Tiwari", "Mitchell Starc", "Sameer Rizvi", "T Natarajan", "Tripurana Vijay", "Tristan Stubbs", "Vipraj Nigam", "Mukesh Kumar", "Auqib Nabi Dar", "Pathum Nissanka", "David Miller", "Ben Duckett", "Lungi Ngidi", "Kyle Jamieson", "Prithvi Shaw", "Sahil Parikh"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'GT': ["Shubman Gill", "Rashid Khan", "Sai Sudharsan", "Anuj Rawat", "Kumar Kushagra", "Manav Suthar", "Jayant Yadav", "Ishant Sharma", "R Sai Kishore", "Mohammad Siraj", "Prasidh Krishna", "B Sai Sudharsan", "Washington Sundar", "Gurnoor Singh Brar", "Shahrukh Khan", "Jos Buttler", "Kagiso Rabada", "Rahul Tewatia", "Jason Holder", "Tom Banton", "Ashok Sharma", "Luke Wood", "Prithvi Raj"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'KKR': ["Ajinkya Rahane", "Angkrish Raghuvanshi", "Anukul Roy", "Manish Pandey", "Ramandeep Singh", "Rinku Singh", "Sunil Narine", "Umran Malik", "Harshit Rana", "Vaibhav Arora", "Varun Chakravarthy", "Rovman Powell", "Cameron Green", "Mustafizur Rahman", "Matheesha Pathirana", "Tejasvi Singh", "Finn Allen", "Rachin Ravindra", "Tim Seifert", "Akash Deep", "Rahul Tripathi", "Prashant Solanki", "Kartik Tyagi", "Sarthak Ranjan", "Daksh Kamra"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'LSG': ["Rishabh Pant", "Nicholas Pooran", "Aiden Markram", "Mitchell Marsh", "Ayush Badoni", "Abdul Samad", "Avesh Khan", "Mohammed Shami", "Mayank Yadav", "Digvesh Rathi", "Akash Singh", "Arjun Tendulkar", "Himmat Singh", "Manimaran Siddharth", "Matthew Breetzke", "Mohsin Khan", "Shahbaz Ahmed", "Prince Yadav", "Josh Inglis", "Mukul Choudhary", "Akshat Raghuwanshi", "Wanindu Hasaranga", "Anrich Nortje", "Naman Tiwari"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'MI': ["Rohit Sharma", "Hardik Pandya", "Suryakumar Yadav", "Jasprit Bumrah", "Tilak Varma", "Deepak Chahar", "Mitchell Santner", "Corbin Bosch", "AM Ghazanfar", "Ashwani Kumar", "Naman Dhir", "Raj Bawa", "Robin Minz", "Ryan Rickelton", "Shardul Thakur", "Sherfane Rutherford", "Mayank Markande", "Will Jacks", "Quinton de Kock", "Atharva Ankolekar", "Mohammad Izhar", "Danish Malewar", "Mayank Rawat"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'PBKS': ["Shreyas Iyer", "Arshdeep Singh", "Yuzvendra Chahal", "Marcus Stoinis", "Lockie Ferguson", "Marco Jansen", "Harnoor Singh Pannu", "Harpreet Brar", "Nehal Wadhera", "Vishnu Vinod", "Vyshak Vijaykumar", "Prabhsimran Singh", "Priyansh Arya", "Pyla Avinash", "Shashank Singh", "Suryansh Shedge", "Xavier Bartlett", "Yash Thakur", "Ben Dwarshuis", "Cooper Connolly", "Vishal Nishad", "Pravin Dubey"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'RR': ["Yashasvi Jaiswal", "Riyan Parag", "Dhruv Jurel", "Jofra Archer", "Kwena Maphaka", "Lhuan-Dre Pretorius", "Nandre Burger", "Sandeep Sharma", "Shimron Hetmyer", "Shubham Dubey", "Tushar Deshpande", "Vaibhav Suryavanshi", "Yudhvir Singh Charak", "Donovan Ferreira", "Ravindra Jadeja", "Sam Curran", "Ravi Bishnoi", "Adam Milne", "Ravi Singh", "Sushant Mishra", "Kuldeep Sen", "Vignesh Puthur", "Yash Punja", "Aman Rao", "Brijesh Sharma"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'RCB': ["Virat Kohli", "Rajat Patidar", "Devdutt Padikkal", "Tim David", "Phil Salt", "Jitesh Sharma", "Krunal Pandya", "Romario Shepherd", "Bhuvneshwar Kumar", "Yash Dayal", "Josh Hazlewood", "Suyash Sharma", "Abhinandan Singh", "Jacob Bethell", "Nuwan Thushara", "Venkatesh Iyer", "Mangesh Yadav", "Jacob Duffy", "Jordan Cox", "Satvik Deswal", "Vicky Ostwal", "Vihaan Malhotra", "Kanishk Chouhan"],</p>
-<p class="p1"><span class="Apple-converted-space">        </span>'SRH': ["Pat Cummins", "Travis Head", "Abhishek Sharma", "Heinrich Klaasen", "Ishan Kishan", "Aniket Verma", "R Smaran", "Nitish Kumar Reddy", "Harsh Dubey", "Kamindu Mendis", "Harshal Patel", "Brydon Carse", "Jaydev Unadkat", "Eshan Malinga", "Zeeshan Ansari", "Liam Livingstone", "Jack Edwards", "Salil Arora", "Shivam Mavi", "Shivang Kumar", "Sakib Hussain", "Omkar Tarmale", "Amit Kumar", "Praful Hinge", "Krains Fuletra"]</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* UPDATED SETS */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const RAW_SETS = [</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "M", title: "SET M: MARQUEE PLAYERS", base: 2.0, rating: 5, role: "STAR", players: ["Virat Kohli (India)", "Rohit Sharma (India)", "MS Dhoni (India)", "Jasprit Bumrah (India)", "Hardik Pandya (India)", "Ravindra Jadeja (India)", "Suryakumar Yadav (India)", "Rishabh Pant (India)", "Shubman Gill (India)", "Pat Cummins (Australia)", "Mitchell Starc (Australia)", "Rashid Khan (Afghanistan)", "Jos Buttler (England)", "Heinrich Klaasen (South Africa)", "Travis Head (Australia)", "Shreyas Iyer (India)", "KL Rahul (India)", "Sanju Samson (India)", "Ruturaj Gaikwad (India)"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "1", title: "SET 1: CAPPED BATTERS", base: 1.5, rating: 4, role: "BAT", players: ["Yashasvi Jaiswal", "Rinku Singh", "Tilak Varma", "Sai Sudharsan", "Abhishek Sharma", "Tristan Stubbs", "Will Jacks", "Rajat Patidar", "Rahul Tripathi [Rating:3]", "Devdutt Padikkal [Rating:2]", "Manish Pandey [Rating:2]", "Ajinkya Rahane [Rating:3]", "David Miller", "Shimron Hetmyer", "Aiden Markram", "Nitish Rana", "Tim David", "Prithvi Shaw [Rating:2]", "Finn Allen", "Pathum Nissanka", "Ben Duckett", "Rovman Powell", "Sherfane Rutherford", "Tom Banton", "Karun Nair [Rating:2]", "Sarfaraz Khan", "Matthew Breetzke", "Dewald Brevis [Rating:3]"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "2", title: "SET 2: CAPPED ALL-ROUNDERS", base: 1.5, rating: 4, role: "ALL", players: ["Sam Curran", "Cameron Green", "Marcus Stoinis", "Liam Livingstone", "Sunil Narine", "Axar Patel", "Washington Sundar", "Shivam Dube", "Krunal Pandya", "Venkatesh Iyer", "Nitish Kumar Reddy", "Ramandeep Singh", "Marco Jansen", "Rachin Ravindra", "Mitchell Marsh", "Wanindu Hasaranga", "Mitchell Santner", "Romario Shepherd", "Jason Holder", "Shardul Thakur", "Shahbaz Ahmed", "Jayant Yadav [Rating:2]", "Kamindu Mendis", "Matthew Short", "Jamie Overton", "Cooper Connolly", "Jacob Bethell", "Zak Foulkes"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "3", title: "SET 3: CAPPED WICKETKEEPERS", base: 1.5, rating: 4, role: "WK", players: ["Nicholas Pooran", "Ishan Kishan", "Quinton de Kock", "Phil Salt", "Josh Inglis", "Dhruv Jurel", "Jitesh Sharma", "Ryan Rickelton", "Tim Seifert", "Donovan Ferreira", "Jordan Cox"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "4", title: "SET 4: CAPPED FAST BOWLERS", base: 1.5, rating: 4, role: "BOWL", players: ["Mohammed Shami", "Mohammed Siraj", "Arshdeep Singh", "Kagiso Rabada", "Jofra Archer", "Anrich Nortje", "Josh Hazlewood", "Bhuvneshwar Kumar", "Deepak Chahar", "T Natarajan", "Harshal Patel", "Avesh Khan", "Mukesh Kumar", "Khaleel Ahmed", "Prasidh Krishna", "Umran Malik", "Matheesha Pathirana", "Mustafizur Rahman", "Lockie Ferguson", "Nathan Ellis", "Nandre Burger", "Kwena Maphaka", "Matt Henry", "Adam Milne", "Lungi Ngidi", "Jaydev Unadkat", "Ishant Sharma", "Sandeep Sharma", "Shivam Mavi", "Mayank Yadav", "Harshit Rana", "Akash Deep", "Kuldeep Sen", "Tushar Deshpande", "Dushmantha Chameera", "Nuwan Thushara", "Jacob Duffy", "Xavier Bartlett", "Ben Dwarshuis", "Brydon Carse", "Luke Wood", "Kyle Jamieson"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "5", title: "SET 5: CAPPED SPINNERS", base: 1.5, rating: 4, role: "BOWL", players: ["Kuldeep Yadav", "Yuzvendra Chahal", "Ravi Bishnoi", "Varun Chakravarthy", "Rahul Chahar", "Noor Ahmad", "Akeal Hosein", "R Sai Kishore", "Mayank Markande [Rating:3]", "Shreyas Gopal [Rating:2]", "AM Ghazanfar"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "6", title: "SET 6: UNCAPPED BATTERS", base: 0.3, rating: 2, role: "BAT", players: ["Nehal Wadhera", "Ashutosh Sharma", "Sameer Rizvi", "Ayush Badoni", "Abdul Samad", "Angkrish Raghuvanshi", "Shashank Singh", "Ayush Mhatre", "Vaibhav Suryavanshi", "Shubham Dubey", "Priyansh Arya", "Harnoor Singh Pannu", "Himmat Singh", "Naman Dhir", "Aniket Verma", "R Smaran", "Sahil Parikh", "Aman Rao", "Danish Malewar", "Mayank Rawat", "Ramakrishna Ghosh", "Sarthak Ranjan", "Daksh Kamra", "Akshat Raghuwanshi", "Vishal Nishad", "Vihaan Malhotra", "Ravi Singh", "Satvik Deswal", "Pyla Avinash"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "7", title: "SET 7: UNCAPPED ALL-ROUNDERS", base: 0.3, rating: 2, role: "ALL", players: ["Rahul Tewatia", "Shahrukh Khan", "Harpreet Brar", "Anukul Roy", "Arjun Tendulkar", "Raj Bawa", "Corbin Bosch", "Jack Edwards", "Aman Khan", "Prashant Veer", "Ajay Mandal", "Tripurana Vijay", "Harsh Dubey", "Suryansh Shedge", "Atharva Ankolekar", "Prince Yadav", "Brijesh Sharma"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "8", title: "SET 8: UNCAPPED WICKETKEEPERS", base: 0.3, rating: 2, role: "WK", players: ["Abishek Porel", "Prabhsimran Singh", "Anuj Rawat", "Robin Minz", "Vishnu Vinod", "Kumar Kushagra", "Lhuan-Dre Pretorius", "Urvil Patel", "Kartik Sharma", "Salil Arora", "Tejasvi Singh"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "9", title: "SET 9: UNCAPPED FAST BOWLERS", base: 0.3, rating: 2, role: "BOWL", players: ["Yash Dayal", "Vyshak Vijaykumar", "Mohsin Khan", "Vaibhav Arora", "Yash Thakur", "Mukesh Choudhary", "Kartik Tyagi", "Anshul Kamboj", "Gurjapneet Singh", "Madhav Tiwari", "Gurnoor Singh Brar", "Ashok Sharma", "Prithvi Raj", "Digvesh Rathi", "Akash Singh", "Mukul Choudhary", "Naman Tiwari", "Ashwani Kumar", "Mohammad Izhar", "Yudhvir Singh Charak", "Sushant Mishra", "Yash Punja", "Abhinandan Singh", "Mangesh Yadav", "Eshan Malinga", "Shivang Kumar", "Sakib Hussain", "Amit Kumar", "Praful Hinge", "Auqib Nabi Dar", "Omkar Tarmale"] },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: "10", title: "SET 10: UNCAPPED SPINNERS", base: 0.3, rating: 2, role: "BOWL", players: ["Suyash Sharma", "Manimaran Siddharth", "Prashant Solanki", "Vicky Ostwal", "Manav Suthar", "Zeeshan Ansari", "Vipraj Nigam", "Pravin Dubey", "Vignesh Puthur", "Kanishk Chouhan", "Krains Fuletra", "Vishal Nishad"] }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>let AUCTION_QUEUE = [];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const RETAINED_PLAYERS_POOL = new Set();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let currentTeamValuations = {};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// ================= RETENTION MANAGER =================</p>
-<p class="p1"><span class="Apple-converted-space">    </span>class RetentionManager {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>constructor() { this.selected = []; this.renderCSKSelection(); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderCSKSelection() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const list = document.getElementById('csk-roster-list'); list.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>ORIGINAL_ROSTERS['CSK'].forEach(name =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const div = document.createElement('div'); div.className = 'ret-item';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let type = this.getPlayerCostType(name);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>div.innerHTML = `&lt;span&gt;${name}&lt;/span&gt; &lt;span style="font-size:0.8rem; color:var(--text-muted);"&gt;${type}&lt;/span&gt; &lt;span class="ret-price-tag" id="price-${name.replace(/\s/g,'')}"&gt;&lt;/span&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>div.onclick = () =&gt; this.toggleSelection(name, div); list.appendChild(div);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>getPlayerCostType(name) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(name.includes("MS Dhoni")) return "Uncapped (Rule)";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(name.includes("Ayush Mhatre") || name.includes("Urvil Patel")) return "Uncapped";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(name.includes("Dewald Brevis")) return "Capped";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>for(let s of RAW_SETS) { if(s.players.some(p =&gt; p.includes(name))) return s.base &gt; 0.5 ? "Capped" : "Uncapped"; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return "Uncapped";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>toggleSelection(name, div) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.selected.includes(name)) { this.selected = this.selected.filter(n =&gt; n !== name); div.classList.remove('selected'); document.getElementById(`price-${name.replace(/\s/g,'')}`).innerText = ""; }<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>else {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>let capped = this.selected.filter(n =&gt; this.getPlayerCostType(n) === "Capped").length;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let uncapped = this.selected.filter(n =&gt; this.getPlayerCostType(n).includes("Uncapped")).length;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let isCurrCapped = (this.getPlayerCostType(name) === "Capped");</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(this.selected.length &gt;= 6) { alert("Max 6 Retentions allowed!"); return; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(isCurrCapped &amp;&amp; capped &gt;= 5) { alert("Max 5 Capped players allowed!"); return; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(!isCurrCapped &amp;&amp; uncapped &gt;= 2) { alert("Max 2 Uncapped players allowed!"); return; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.selected.push(name); div.classList.add('selected');<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.updateSummary();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateSummary() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let sorted = [...this.selected].sort((a,b) =&gt; (this.getPlayerCostType(b)==="Capped") - (this.getPlayerCostType(a)==="Capped"));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let cost = 0; let caps = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.ret-price-tag').forEach(e =&gt; e.innerText = '');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>sorted.forEach(name =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let type = this.getPlayerCostType(name); let pCost = 4;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(type === "Capped") { caps++; if(caps===1)pCost=18; else if(caps===2)pCost=14; else if(caps===3)pCost=11; else if(caps===4)pCost=18; else if(caps===5)pCost=14; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>cost += pCost; document.getElementById(`price-${name.replace(/\s/g,'')}`).innerText = `₹${pCost} Cr`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('ret-count-disp').innerText = `${this.selected.length}/6`; document.getElementById('ret-cost-disp').innerText = `₹${cost} Cr`; document.getElementById('ret-purse-disp').innerText = `₹${(120 - cost).toFixed(2)} Cr`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>confirmRetentions() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!confirm("Confirm these retentions?")) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>audioManager.startMusic();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let sorted = [...this.selected].sort((a,b) =&gt; (this.getPlayerCostType(b)==="Capped") - (this.getPlayerCostType(a)==="Capped"));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let caps = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>sorted.forEach(name =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let type = this.getPlayerCostType(name); let pCost = 4;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(type === "Capped") { caps++; if(caps===1)pCost=18; else if(caps===2)pCost=14; else if(caps===3)pCost=11; else if(caps===4)pCost=18; else if(caps===5)pCost=14; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.addPlayerToTeam('CSK', name, pCost);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.simulateAIRetentions();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('ret-select-view').style.display = 'none'; document.getElementById('ret-result-view').style.display = 'flex'; this.renderRetentionResults();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>simulateAIRetentions() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>TEAMS.forEach(team =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(team.isUser) return;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const roster = ORIGINAL_ROSTERS[team.id]; if(!roster) return;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let stars = [];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>roster.forEach(name =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let rating = 1; for(let s of RAW_SETS) { if(s.players.some(p =&gt; p.includes(name))) { rating = s.rating; break; } }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(rating &gt;= 4) stars.push({name, r: rating});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>stars.sort((a,b) =&gt; b.r - a.r);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let count = Math.floor(Math.random() * 3) + 2;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>let retained = stars.slice(0, count);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let caps = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>retained.forEach(p =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let type = this.getPlayerCostType(p.name); let pCost = 4;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(type === "Capped") { caps++; if(caps===1)pCost=18; else if(caps===2)pCost=14; else if(caps===3)pCost=11; else if(caps===4)pCost=18; else if(caps===5)pCost=14; }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>this.addPlayerToTeam(team.id, p.name, pCost);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>addPlayerToTeam(tid, rawName, cost) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const team = TEAMS.find(t =&gt; t.id === tid); team.purse -= cost; RETAINED_PLAYERS_POOL.add(rawName);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let role = "ALL"; let country = "🇮🇳 India"; let isOverseas = false;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>for(let s of RAW_SETS) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const match = s.players.find(p =&gt; p.includes(rawName));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(match) { role = s.role; if(match.includes("Overseas") || match.includes("Australia") || match.includes("England") || match.includes("South Africa") || match.includes("Afghanistan")) { country = "✈️ Overseas"; isOverseas = true; } break; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(role === 'BAT') team.needs.BAT--; else if(role === 'BOWL') team.needs.BOWL--; else if(role === 'WK') team.needs.WK--; else team.needs.ALL--;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// Image logic</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let img = PLAYER_IMAGES[rawName] || `https://ui-avatars.com/api/?name=${rawName.replace(' ','+')}&amp;size=256&amp;background=random&amp;color=fff`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>team.players.push({ n: rawName, role: role, country: country, isOverseas: isOverseas, soldPrice: cost, img: img });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderRetentionResults() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const grid = document.getElementById('ai-ret-grid');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>TEAMS.forEach(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const pNames = t.players.map(p =&gt; p.n).join(', ');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>grid.innerHTML += `&lt;div class="team-box"&gt;&lt;div class="team-header" style="background:${t.color}; color:${t.text}"&gt;&lt;img src="${t.logo}"&gt; ${t.name}&lt;/div&gt;&lt;div class="player-list" style="max-height:100px; font-size:0.8rem; color:#888;"&gt;${pNames || "None"}&lt;/div&gt;&lt;div class="team-stats"&gt;Purse: ₹${t.purse.toFixed(2)} Cr&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>startAuction() { document.getElementById('retention-modal').classList.remove('active'); game.init(); renderSquads(); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const retentionManager = new RetentionManager();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// ================= AUCTION ENGINE =================</p>
-<p class="p1"><span class="Apple-converted-space">    </span>class Game {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>constructor() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.qIndex = -1; this.currentBid = 0; this.holder = null; this.timer = 10; this.interval = null; this.aiTimeout = null; this.sold = false; this.isPaused = false;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui = {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>price: document.getElementById('bid-price'), leaderText: document.getElementById('leader-text'), leaderLogo: document.getElementById('leader-logo'), timer: document.getElementById('timer-bar'),</p>
-<p class="p1"><span class="Apple-converted-space">                </span>feed: document.getElementById('feed-list'), stamp: document.getElementById('sold-stamp'), sub: document.getElementById('sold-sub'), bidBtn: document.getElementById('btn-bid'),</p>
-<p class="p1"><span class="Apple-converted-space">                </span>bidMainText: document.getElementById('btn-main-text'), bidAmt: document.getElementById('btn-bid-amt'), nextBtn: document.getElementById('btn-next'), simPlayerBtn: document.getElementById('btn-sim-player'),</p>
-<p class="p1"><span class="Apple-converted-space">                </span>simSetBtn: document.getElementById('btn-sim-set'), passBtn: document.getElementById('btn-pass'), pauseBtn: document.getElementById('btn-pause'), purse: document.getElementById('user-purse'),</p>
-<p class="p1"><span class="Apple-converted-space">                </span>count: document.getElementById('squad-count'), osCount: document.getElementById('os-count')</p>
-<p class="p1"><span class="Apple-converted-space">            </span>};</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.bidBtn.onclick = () =&gt; this.humanBid(); this.ui.nextBtn.onclick = () =&gt; this.nextPlayer();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>init() { this.prepareAuction(); this.renderSets(); this.nextPlayer(); }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>prepareAuction() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>AUCTION_QUEUE = [];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>RAW_SETS.forEach(set =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let shuffledNames = set.players.sort(() =&gt; Math.random() - 0.5);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>shuffledNames.forEach(rawName =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let cleanName = rawName.split('(')[0].split('[')[0].trim();</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let isRetained = false; TEAMS.forEach(t =&gt; { if(t.players.some(p =&gt; p.n === cleanName || rawName.includes(p.n))) isRetained = true; });</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(isRetained) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let name = cleanName; let country = "🇮🇳 India"; let isOverseas = false;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (rawName.includes("Overseas") || rawName.includes("Australia") || rawName.includes("England") || rawName.includes("South Africa") || rawName.includes("Afghanistan")) { country = "✈️ Overseas"; isOverseas = true; }</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let rating = set.rating;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(rawName.includes("Rating:")) rating = parseInt(rawName.split("Rating:")[1].replace("]","").trim());</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let marketValue = 0.5;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(rating === 5) marketValue = 11 + (Math.random() * 12);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>else if(rating === 4) marketValue = 5 + (Math.random() * 8);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>else if(rating === 3) marketValue = 2 + (Math.random() * 4);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>else if(rating === 2) marketValue = 0.5 + (Math.random() * 2);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>else marketValue = 0.2 + (Math.random() * 0.5);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let form = "Normal";</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(rating &lt; 5 &amp;&amp; Math.random() &lt; 0.4) { form = "❄️ Cold"; marketValue *= 0.5; }</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>// IMPROVED IMAGE FALLBACK LOGIC</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let img = PLAYER_IMAGES[name];</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(!img) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>// Use a reliable avatar generator if specific image not found</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>img = `https://ui-avatars.com/api/?name=${name.replace(' ','+')}&amp;size=256&amp;background=0D47A1&amp;color=fff&amp;font-size=0.33&amp;bold=true`;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>AUCTION_QUEUE.push({ n: name, role: set.role, country: country, isOverseas: isOverseas, setName: set.title, base: set.base, r: rating, marketValue: marketValue, form: form, img: img });</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderSets() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const c = document.getElementById('sets-list-container'); c.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let sets = {};</p>
-<p class="p1"><span class="Apple-converted-space">            </span>AUCTION_QUEUE.forEach(p =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(!sets[p.setName]) sets[p.setName] = [];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sets[p.setName].push(p);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>for(let key in sets) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>c.innerHTML += `&lt;div class="set-group"&gt;&lt;div class="set-title-bar"&gt;${key}&lt;/div&gt;&lt;div class="set-grid-body"&gt;${sets[key].map(p =&gt; `&lt;div class="set-card-p"&gt;&lt;span style="font-weight:bold;"&gt;${p.n}&lt;/span&gt;&lt;span class="p-flag"&gt;${p.role}&lt;/span&gt;&lt;/div&gt;`).join('')}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>nextPlayer() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.qIndex++; if(this.qIndex &gt;= AUCTION_QUEUE.length) { alert("Auction Completed!"); return; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const p = AUCTION_QUEUE[this.qIndex];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.currentBid = p.base; this.holder = null; this.timer = 10; this.sold = false; this.isPaused = false;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>currentTeamValuations = {};</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let eventText = "";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let isWar = Math.random() &lt; 0.05;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let isSteal = Math.random() &gt; 0.90;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>TEAMS.forEach(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(t.isUser) return;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let v = p.marketValue;</p>
-<p class="p2"><span class="Apple-converted-space">                </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>let progress = this.qIndex / AUCTION_QUEUE.length;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(t.players.length &lt; 18 &amp;&amp; progress &gt; 0.6) v *= 2.0;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(t.players.length &lt; 15 &amp;&amp; progress &gt; 0.8) v *= 4.0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>let need = t.needs[p.role];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(need &gt; 3) v *= 1.5;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>else if(need &lt;= 0) v *= 0.1;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(t.purse &lt; 5) v = 0;<span class="Apple-converted-space"> </span></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>v *= (0.8 + Math.random()*0.4);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(isWar &amp;&amp; Math.random() &gt; 0.8) v *= 2.0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(isSteal) v *= 0.3;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>currentTeamValuations[t.id] = v;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(isWar) eventText = "🔥 EGO CLASH!";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(isSteal) eventText = "💤 SLEEPY MARKET...";</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('p-name').innerText = p.n; document.getElementById('p-role').innerText = p.role; document.getElementById('p-country').innerText = p.country; document.getElementById('p-set').innerText = p.setName;<span class="Apple-converted-space"> </span></p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// Set Image with error handling</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const imgEl = document.getElementById('p-img');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>imgEl.src = p.img;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>imgEl.onerror = function() {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.onerror = null;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.src = `https://ui-avatars.com/api/?name=${p.n.replace(' ','+')}&amp;size=256&amp;background=000&amp;color=fff`;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = `Base Price (${p.form})`; this.ui.leaderText.style.color = "#888"; this.ui.leaderLogo.style.display = 'none'; this.ui.stamp.classList.remove('active');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.bidBtn.style.display = 'flex'; this.ui.simPlayerBtn.style.display = 'flex'; this.ui.simSetBtn.style.display = 'flex'; this.ui.passBtn.style.display = 'block'; this.ui.pauseBtn.style.display = 'block'; this.ui.nextBtn.style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.pauseBtn.innerText = "⏸"; this.ui.pauseBtn.classList.remove('active'); this.ui.timer.classList.remove('paused'); this.ui.timer.classList.remove('critical');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.feed.innerHTML = eventText ? `&lt;div class="feed-item"&gt;&lt;span class="event-text"&gt;${eventText}&lt;/span&gt;&lt;/div&gt;` : '';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.updateBidBtn(); this.startTimer(); this.triggerAI();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>startTimer() {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>clearInterval(this.interval);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.interval = setInterval(() =&gt; {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(this.sold || this.isPaused) return;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.timer -= 0.1;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.ui.timer.style.width = (this.timer * 10) + "%";<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(this.timer &lt; 3) this.ui.timer.classList.add('critical'); else this.ui.timer.classList.remove('critical');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(this.timer &lt;= 0) this.sell();<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>}, 100);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>togglePause() { this.isPaused = !this.isPaused; if(this.isPaused) { this.ui.pauseBtn.innerText = "▶"; this.ui.pauseBtn.classList.add('active'); this.ui.timer.classList.add('paused'); clearTimeout(this.aiTimeout); } else { this.ui.pauseBtn.innerText = "⏸"; this.ui.pauseBtn.classList.remove('active'); this.ui.timer.classList.remove('paused'); this.triggerAI(); } }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>triggerAI() {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>clearTimeout(this.aiTimeout);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.sold || this.isPaused) return;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>let delay = 800 + (Math.random() * 1000);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.timer &lt; 3 &amp;&amp; Math.random() &gt; 0.4) { delay = (this.timer * 1000) - 100; if(delay&lt;100) delay=100; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.aiTimeout = setTimeout(() =&gt; this.processAIBid(), delay);<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>canTeamBid(team, amt, player) { if(team.purse &lt; amt) return false; if(team.players.length &gt;= 25) return false; if(player.isOverseas) { const osCount = team.players.filter(p =&gt; p.isOverseas).length; if(osCount &gt;= 8) return false; } return true; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>processAIBid() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.sold || this.isPaused) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const p = AUCTION_QUEUE[this.qIndex];</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// Jump Bids</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let jump = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(Math.random() &lt; 0.1 &amp;&amp; this.currentBid &gt; 2) jump = 1.0;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>let nextBid = this.getNextBid() + jump;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const interested = TEAMS.filter(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(t.isUser || t.id === this.holder) return false;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(!this.canTeamBid(t, nextBid, p)) return false;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let maxVal = currentTeamValuations[t.id] || 0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return nextBid &lt;= maxVal;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// --- MANDATORY FILL LOGIC (Live Bidding) ---</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(interested.length === 0 &amp;&amp; this.holder === null) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>// If unsold, check if any team has &lt; 18 players</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const desperate = TEAMS.filter(t =&gt; !t.isUser &amp;&amp; t.players.length &lt; 18 &amp;&amp; this.canTeamBid(t, nextBid, p));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(desperate.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>// Pick random desperate team</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>this.bid(desperate[Math.floor(Math.random()*desperate.length)].id, nextBid);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(interested.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const bidder = interested[Math.floor(Math.random() * interested.length)];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.bid(bidder.id, nextBid);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>getNextBid() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let inc = 0.05;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.currentBid &gt;= 10) inc = 0.50; else if(this.currentBid &gt;= 2) inc = 0.20; else if(this.currentBid &gt;= 1) inc = 0.10;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return this.currentBid + inc;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>bid(teamId, customAmt = null) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.sold) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const team = TEAMS.find(t =&gt; t.id === teamId); const amt = customAmt || ((this.holder) ? this.getNextBid() : this.currentBid);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!this.canTeamBid(team, amt, AUCTION_QUEUE[this.qIndex])) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.currentBid = amt; this.holder = teamId; this.timer = 10;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = team.name; this.ui.leaderText.style.color = team.color; this.ui.leaderLogo.src = team.logo; this.ui.leaderLogo.style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.updateBidBtn();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const row = document.createElement('div'); row.className = 'feed-item'; if(team.isUser) row.classList.add('user-bid');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>row.innerHTML = `&lt;span&gt;&lt;img src="${team.logo}" class="feed-logo"&gt; ${team.id}&lt;/span&gt; &lt;b&gt;₹${amt.toFixed(2)}&lt;/b&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.feed.prepend(row);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.triggerAI();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>humanBid() { if(this.holder !== 'CSK') this.bid('CSK'); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>pass() { }<span class="Apple-converted-space"> </span></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>quickSim(silent = false) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.sold) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let loops = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const p = AUCTION_QUEUE[this.qIndex];</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(Object.keys(currentTeamValuations).length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>TEAMS.forEach(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(!t.isUser) {</p>
-<p class="p1"><span class="Apple-converted-space">                         </span>let v = p.marketValue * (0.5 + Math.random() * 1.0);</p>
-<p class="p1"><span class="Apple-converted-space">                         </span>if(t.players.length &lt; 18) v *= 2.0;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                         </span>currentTeamValuations[t.id] = v;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>while(loops &lt; 100) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const next = this.getNextBid();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const candidates = TEAMS.filter(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(t.isUser || t.id === this.holder) return false;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(!this.canTeamBid(t, next, p)) return false;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>return next &lt;= (currentTeamValuations[t.id] || 0);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(candidates.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(!this.holder) {</p>
-<p class="p1"><span class="Apple-converted-space">                         </span>// FORCE BUY IN SIM</p>
-<p class="p1"><span class="Apple-converted-space">                         </span>const desperate = TEAMS.filter(t =&gt; !t.isUser &amp;&amp; t.players.length &lt; 18 &amp;&amp; this.canTeamBid(t, next, p));</p>
-<p class="p1"><span class="Apple-converted-space">                         </span>if(desperate.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                             </span>this.currentBid = next; this.holder = desperate[Math.floor(Math.random()*desperate.length)].id; break;</p>
-<p class="p1"><span class="Apple-converted-space">                         </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>break;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const winner = candidates[Math.floor(Math.random() * candidates.length)];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.currentBid = next; this.holder = winner.id;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>loops++;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!silent) this.sell();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>simSet() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!confirm("Simulate the rest of this set?")) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const currentSetName = AUCTION_QUEUE[this.qIndex].setName; let playersProcessed = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.quickSim(true); this.sell(true); playersProcessed++;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>while(this.qIndex + 1 &lt; AUCTION_QUEUE.length) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const nextP = AUCTION_QUEUE[this.qIndex + 1];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(nextP.setName !== currentSetName) break;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.qIndex++; this.currentBid = nextP.base; this.holder = null;</p>
-<p class="p2"><span class="Apple-converted-space">                </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>let loops = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let simValuations = {};</p>
-<p class="p1"><span class="Apple-converted-space">                </span>TEAMS.forEach(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                   </span>if(!t.isUser) {</p>
-<p class="p1"><span class="Apple-converted-space">                       </span>let v = nextP.marketValue * (0.5 + Math.random() * 1.0);</p>
-<p class="p1"><span class="Apple-converted-space">                       </span>if(t.players.length &lt; 18) v *= 3.0; // Aggressive</p>
-<p class="p1"><span class="Apple-converted-space">                       </span>simValuations[t.id] = v;</p>
-<p class="p1"><span class="Apple-converted-space">                   </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>while(loops &lt; 100) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const next = this.currentBid + (this.currentBid &gt;= 10 ? 0.5 : (this.currentBid &gt;= 2 ? 0.2 : 0.05));</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const candidates = TEAMS.filter(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if(t.isUser) return false;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if(!this.canTeamBid(t, next, nextP)) return false;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>return next &lt;= (simValuations[t.id] || 0);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(candidates.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if(!this.holder) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>// FORCE BUY IN BULK SIM</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>const desperate = TEAMS.filter(t =&gt; !t.isUser &amp;&amp; t.players.length &lt; 18 &amp;&amp; this.canTeamBid(t, next, nextP));</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>if(desperate.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                                 </span>this.currentBid = next; this.holder = desperate[Math.floor(Math.random()*desperate.length)].id; break;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>break;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const winner = candidates[Math.floor(Math.random() * candidates.length)];</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>this.currentBid = next; this.holder = winner.id;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>loops++;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(this.holder) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const t = TEAMS.find(x =&gt; x.id === this.holder); nextP.soldPrice = this.currentBid; t.purse -= this.currentBid; t.players.push(nextP);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(nextP.role === 'BAT') t.needs.BAT--; else if(nextP.role === 'BOWL') t.needs.BOWL--; else if(nextP.role === 'WK') t.needs.WK--; else t.needs.ALL--;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>playersProcessed++;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>renderSquads();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const summary = document.createElement('div'); summary.className = 'feed-item'; summary.style.background = '#443355'; summary.innerHTML = `&lt;span&gt;⏩ Simulated ${playersProcessed} players&lt;/span&gt;`; this.ui.feed.prepend(summary);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.qIndex &gt;= AUCTION_QUEUE.length - 1) { alert("Auction Completed!"); } else { this.nextPlayer(); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>sell(silent = false) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.sold = true; clearInterval(this.interval); clearTimeout(this.aiTimeout); let resultText = "UNSOLD";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const p = AUCTION_QUEUE[this.qIndex];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.holder) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const t = TEAMS.find(x =&gt; x.id === this.holder); p.soldPrice = this.currentBid; t.purse -= this.currentBid; t.players.push(p); resultText = t.id;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(p.role === 'BAT') t.needs.BAT--; else if(p.role === 'BOWL') t.needs.BOWL--; else if(p.role === 'WK') t.needs.WK--; else t.needs.ALL--;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(!silent) { this.ui.stamp.classList.add('active'); this.ui.stamp.style.borderColor = t.color; this.ui.stamp.style.color = t.color; this.ui.sub.innerText = `SOLD TO ${t.id}`; this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = t.name; this.ui.leaderLogo.src = t.logo; this.ui.leaderLogo.style.display = 'block'; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(t.isUser) { this.ui.purse.innerText = `₹ ${t.purse.toFixed(2)} Cr`; this.ui.count.innerText = t.players.length; this.ui.osCount.innerText = t.players.filter(p=&gt;p.isOverseas).length; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else if(!silent) { this.ui.stamp.classList.add('active'); this.ui.stamp.style.borderColor = "#fff"; this.ui.stamp.style.color = "#fff"; this.ui.sub.innerText = "UNSOLD"; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!silent) { this.ui.bidBtn.style.display = 'none'; this.ui.simPlayerBtn.style.display = 'none'; this.ui.simSetBtn.style.display = 'none'; this.ui.passBtn.style.display = 'none'; this.ui.pauseBtn.style.display = 'none'; this.ui.nextBtn.style.display = 'block'; renderSquads(); }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return resultText;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateBidBtn() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const next = this.getNextBid(); const p = AUCTION_QUEUE[this.qIndex]; const csk = TEAMS[0];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.bidAmt.innerText = `₹ ${next.toFixed(2)} Cr`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let disabled = false; let msg = "BID NOW";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(this.holder === 'CSK') { disabled = true; msg = "YOU LEAD"; } else if(csk.purse &lt; next) { disabled = true; msg = "NO FUNDS"; } else if(csk.players.length &gt;= 25) { disabled = true; msg = "SQUAD FULL"; } else if(p.isOverseas) { const os = csk.players.filter(x =&gt; x.isOverseas).length; if(os &gt;= 8) { disabled = true; msg = "OS LIMIT"; } }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.ui.bidBtn.disabled = disabled; this.ui.bidBtn.style.opacity = disabled ? "0.5" : "1"; document.getElementById('btn-main-text').innerText = msg;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>openSquads() { showModal('squads-modal'); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function renderSquads() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const c = document.getElementById('squads-container'); c.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>TEAMS.forEach(t =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let pList = '';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(t.players.length === 0) pList = '&lt;div style="color:var(--text-muted); font-style:italic; padding:10px; text-align:center;"&gt;No players yet&lt;/div&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>else { pList = t.players.map(p =&gt; { let flag = p.isOverseas ? "✈️" : ""; let priceTag = p.soldPrice ? `₹${p.soldPrice.toFixed(2)} Cr` : `₹${p.base ? p.base.toFixed(2) : 'Retained'} Cr`; return `&lt;div class="p-row"&gt;&lt;span&gt;${flag} ${p.n} &lt;small style="color:var(--text-muted); font-size:0.7em;"&gt;${p.role}&lt;/small&gt;&lt;/span&gt;&lt;span class="p-price"&gt;${priceTag}&lt;/span&gt;&lt;/div&gt;`; }).join(''); }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let osCount = t.players.filter(p=&gt;p.isOverseas).length;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>c.innerHTML += `&lt;div class="team-box"&gt;&lt;div class="team-header" style="background:${t.color}; color:${t.text}"&gt;&lt;img src="${t.logo}" onerror="this.src='https://ui-avatars.com/api/?name=${t.id}'"&gt; ${t.name}&lt;/div&gt;&lt;div class="team-stats"&gt;&lt;span&gt;💰 ₹${t.purse.toFixed(2)}&lt;/span&gt;&lt;span&gt;👥 ${t.players.length}/25&lt;/span&gt;&lt;span&gt;✈️ ${osCount}/8&lt;/span&gt;&lt;/div&gt;&lt;div class="player-list"&gt;${pList}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function showModal(id) { document.getElementById(id).classList.add('active'); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function closeModal(id) { document.getElementById(id).classList.remove('active'); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const game = new Game();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<audio id="bg-music" loop>
+    <source id="audio-src" src="https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3" type="audio/mp3">
+</audio>
+
+<div id="theme-menu">
+    <button class="theme-btn" onclick="ui.setTheme('default')">IPL Official (Default)</button>
+    <button class="theme-btn" onclick="ui.setTheme('midnight')">Midnight Dark</button>
+    <button class="theme-btn" onclick="ui.setTheme('cyberpunk')">Cyberpunk Neon</button>
+    <button class="theme-btn" onclick="ui.setTheme('royal')">Royal Gold</button>
+</div>
+
+<div class="sidebar">
+    <div class="nav-icon" onclick="game.openSquads()" title="View Squads">👥</div>
+    <div class="nav-icon" onclick="showModal('sets-modal')" title="Auction Order">📜</div>
+    <div class="nav-icon" onclick="ui.toggleThemeMenu()" title="Change Theme">🎨</div>
+    
+    <div class="volume-control">
+        <div class="nav-icon" id="music-switch-btn" onclick="audioManager.nextTrack()" title="Change Music" style="margin-bottom:5px; background:var(--accent-primary); font-size:18px;">🎵</div>
+        <div class="nav-icon" id="mute-btn" onclick="audioManager.toggleMute()" title="Mute Music" style="margin-bottom:5px; background:transparent; box-shadow:none;">🔊</div>
+        <input type="range" id="vol-slider" orient="vertical" min="0" max="1" step="0.1" value="0.5" oninput="audioManager.setVolume(this.value)" title="Volume">
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="top-bar">
+        <div class="logo-area">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Chennai_Super_Kings_Logo.svg/1200px-Chennai_Super_Kings_Logo.svg.png" alt="CSK"> 
+            CHENNAI SUPER KINGS
+        </div>
+        <div class="stats-area">
+            <div class="stat-box"><div class="stat-label">Purse Left</div><div class="stat-value" id="user-purse">₹120.00 Cr</div></div>
+            <div class="stat-box"><div class="stat-label">Squad</div><div class="stat-value"><span id="squad-count">0</span>/25</div></div>
+            <div class="stat-box"><div class="stat-label">Overseas</div><div class="stat-value"><span id="os-count">0</span>/8</div></div>
+        </div>
+    </div>
+
+    <div class="arena">
+        <div class="center-stage">
+            <div class="player-card">
+                <div class="stamp" id="sold-stamp">SOLD <small id="sold-sub">to MI</small></div>
+                <div class="player-img-section"><img id="p-img" src="" alt="Player"></div>
+                <div class="player-info">
+                    <div class="set-badge" id="p-set">SET 1</div>
+                    <div class="player-name" id="p-name">Loading...</div>
+                    <div class="player-meta"><span class="role-tag" id="p-role">BAT</span> <span id="p-country">🇮🇳 India</span></div>
+                    <div class="bid-display">
+                        <div class="current-holder" id="bid-leader">
+                            <img src="" class="holder-logo" id="leader-logo" style="display:none">
+                            <span id="leader-text">Waiting...</span>
+                        </div>
+                        <div class="current-price" id="bid-price">₹ 2.00 Cr</div>
+                        <div class="timer-bar"><div class="timer-fill" id="timer-bar"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-pause" id="btn-pause" onclick="game.togglePause()">⏸</button>
+                <button class="btn btn-pass" id="btn-pass" onclick="game.pass()">PASS</button>
+                <button class="btn btn-sim" id="btn-sim-player" onclick="game.quickSim()" title="Simulate Result for Current Player"><span>⚡</span> SIM PLAYER</button>
+                <button class="btn btn-sim" id="btn-sim-set" onclick="game.simSet()" title="Simulate Rest of Current Set"><span>⏩</span> SIM SET</button>
+                <button class="btn btn-bid" id="btn-bid">
+                    <div id="btn-main-text">BID NOW</div>
+                    <span id="btn-bid-amt" style="font-weight:normal; font-size:0.8rem; opacity:0.8">₹ 2.00 Cr</span>
+                </button>
+                <button class="btn btn-next" id="btn-next">Next Player ➔</button>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="panel-header">LIVE FEED</div>
+            <div class="feed-list" id="feed-list"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal active" id="retention-modal">
+    <div class="modal-content">
+        <div id="retention-screen">
+            <div class="modal-header"><h3>IPL 2026: PRE-AUCTION RETENTION</h3></div>
+            <div class="ret-container" id="ret-select-view">
+                <div class="ret-col" style="flex:2;">
+                    <div style="margin-bottom:10px; font-size:1.2rem; font-weight:bold; color:var(--text-main);">Your Squad (CSK)</div>
+                    <div style="margin-bottom:10px; font-size:0.8rem; color:var(--text-muted);">Select Max 5 Capped, Max 2 Uncapped. (Total 6)</div>
+                    <div class="ret-list" id="csk-roster-list"></div>
+                </div>
+                <div class="ret-col" style="flex:1; max-width:300px; justify-content:space-between;">
+                    <div style="background:var(--bg-secondary); padding:20px; border-radius:12px; text-align:center; color:#fff;">
+                        <div style="font-size:0.9rem; opacity:0.8;">Players Selected</div>
+                        <div style="font-size:2rem; font-weight:bold;" id="ret-count-disp">0/6</div>
+                        <br>
+                        <div style="font-size:0.9rem; opacity:0.8;">Total Cost</div>
+                        <div style="font-size:2rem; font-weight:bold; color:var(--accent-primary);" id="ret-cost-disp">₹0 Cr</div>
+                        <br>
+                        <div style="font-size:0.9rem; opacity:0.8;">Remaining Purse</div>
+                        <div style="font-size:1.5rem; font-weight:bold; color:var(--accent-secondary);" id="ret-purse-disp">₹120.00 Cr</div>
+                    </div>
+                    <button class="btn-bid" style="width:100%; border-radius:8px; height:60px;" onclick="retentionManager.confirmRetentions()">CONFIRM & START</button>
+                </div>
+            </div>
+            <div class="ret-summary-screen" id="ret-result-view" style="display:none; flex-direction:column; align-items:center; padding:30px; overflow-y:auto;">
+                <h1 style="color:var(--text-main); margin-bottom:20px;">RETENTIONS CONFIRMED</h1>
+                <div class="squads-grid" id="ai-ret-grid" style="width:100%;"></div>
+                <button class="btn-bid" style="margin-top:30px; width:300px; padding:15px; border-radius:8px;" onclick="retentionManager.startAuction()">ENTER AUCTION ARENA</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="squads-modal"><div class="modal-content"><div class="modal-header"><h3>Team Squads</h3><button class="close-btn" onclick="closeModal('squads-modal')">&times;</button></div><div class="modal-body"><div class="squads-grid" id="squads-container"></div></div></div></div>
+<div class="modal" id="sets-modal"><div class="modal-content"><div class="modal-header"><h3>Auction Order</h3><button class="close-btn" onclick="closeModal('sets-modal')">&times;</button></div><div class="modal-body"><div id="sets-list-container"></div></div></div></div>
+
+<script>
+    // ================= AUDIO MANAGER =================
+    const audioManager = {
+        tracks: [
+            "https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3", // Tense
+            "https://codeskulptor-demos.commondatastorage.googleapis.com/pang/paza-moduless.mp3", // Chill
+            "https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg" // Action
+        ],
+        currentTrack: 0,
+        isMuted: false,
+        init: () => {
+            const aud = document.getElementById('bg-music');
+            aud.volume = 0.5;
+        },
+        startMusic: () => {
+            const aud = document.getElementById('bg-music');
+            if(aud.paused) { aud.play().catch(e => console.log("Audio waiting for interaction")); }
+        },
+        nextTrack: () => {
+            const aud = document.getElementById('bg-music');
+            audioManager.currentTrack = (audioManager.currentTrack + 1) % audioManager.tracks.length;
+            document.getElementById('audio-src').src = audioManager.tracks[audioManager.currentTrack];
+            aud.load();
+            if(!audioManager.isMuted) aud.play();
+        },
+        toggleMute: () => {
+            const aud = document.getElementById('bg-music');
+            const btn = document.getElementById('mute-btn');
+            audioManager.isMuted = !audioManager.isMuted;
+            aud.muted = audioManager.isMuted;
+            btn.innerText = audioManager.isMuted ? "🔇" : "🔊";
+            if(!audioManager.isMuted && aud.paused) aud.play();
+        },
+        setVolume: (val) => {
+            const aud = document.getElementById('bg-music');
+            aud.volume = val;
+        }
+    };
+    audioManager.init();
+
+    // ================= UI ENGINE =================
+    const ui = {
+        toggleThemeMenu: () => { document.getElementById('theme-menu').classList.toggle('active'); },
+        setTheme: (theme) => {
+            if(theme === 'default') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('theme-menu').classList.remove('active');
+        }
+    };
+
+    // ================= DATA (FIXED LOGOS FOR RR, RCB, SRH, DC) =================
+    const TEAMS = [
+        { id: 'CSK', name: 'Chennai Super Kings', color: '#F9CD05', text: '#111', purse: 120, players: [], isUser: true, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Chennai_Super_Kings_Logo.svg/1200px-Chennai_Super_Kings_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'MI', name: 'Mumbai Indians', color: '#004BA0', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/c/cd/Mumbai_Indians_Logo.svg/1200px-Mumbai_Indians_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'RCB', name: 'Royal Challengers Bengaluru', color: '#EC1C24', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Royal_Challengers_Bangalore_2020.svg/1200px-Royal_Challengers_Bangalore_2020.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'KKR', name: 'Kolkata Knight Riders', color: '#3A225D', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4c/Kolkata_Knight_Riders_Logo.svg/1200px-Kolkata_Knight_Riders_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'SRH', name: 'Sunrisers Hyderabad', color: '#F76D20', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/8/81/Sunrisers_Hyderabad.svg/1200px-Sunrisers_Hyderabad.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'DC', name: 'Delhi Capitals', color: '#0078BC', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/2/2f/Delhi_Capitals_Logo.svg/1200px-Delhi_Capitals_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'GT', name: 'Gujarat Titans', color: '#1B2133', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/0/09/Gujarat_Titans_Logo.svg/1200px-Gujarat_Titans_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'RR', name: 'Rajasthan Royals', color: '#EA1A85', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Rajasthan_Royals_Logo.svg/1200px-Rajasthan_Royals_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'PBKS', name: 'Punjab Kings', color: '#DD1F2D', text: '#fff', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d4/Punjab_Kings_Logo.svg/1200px-Punjab_Kings_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } },
+        { id: 'LSG', name: 'Lucknow Super Giants', color: '#A0CEF5', text: '#000', purse: 120, players: [], isUser: false, logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Lucknow_Super_Giants_IPL_Logo.svg/1200px-Lucknow_Super_Giants_IPL_Logo.svg.png", needs: { BAT:6, BOWL:6, ALL:4, WK:2 } }
+    ];
+
+    // PLAYER IMAGES
+    const PLAYER_IMAGES = {
+        "Virat Kohli": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg",
+        "MS Dhoni": "https://upload.wikimedia.org/wikipedia/commons/c/c4/MS_Dhoni_in_2011.jpg",
+        "Rohit Sharma": "https://upload.wikimedia.org/wikipedia/commons/1/12/Rohit_Sharma_in_2023.jpg",
+        "Jasprit Bumrah": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Jasprit_Bumrah_in_2023.jpg",
+        "Hardik Pandya": "https://upload.wikimedia.org/wikipedia/commons/9/95/Hardik_Pandya_in_2023.jpg",
+        "Ravindra Jadeja": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Ravindra_Jadeja_in_2023.jpg",
+        "Rishabh Pant": "https://upload.wikimedia.org/wikipedia/commons/3/30/Rishabh_Pant_in_2023.jpg",
+        "Shubman Gill": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Shubman_Gill_in_2023.jpg",
+        "Pat Cummins": "https://upload.wikimedia.org/wikipedia/commons/1/17/Pat_Cummins_in_2023.jpg",
+        "Mitchell Starc": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Mitchell_Starc_in_2023.jpg",
+        "Sanju Samson": "https://upload.wikimedia.org/wikipedia/commons/5/59/Sanju_Samson_in_2023.jpg",
+        "KL Rahul": "https://upload.wikimedia.org/wikipedia/commons/6/69/KL_Rahul_in_2023.jpg",
+        "Ruturaj Gaikwad": "https://upload.wikimedia.org/wikipedia/commons/6/63/Ruturaj_Gaikwad_in_2023.jpg",
+        "Shreyas Iyer": "https://upload.wikimedia.org/wikipedia/commons/0/06/Shreyas_Iyer_in_2023.jpg",
+        "Suryakumar Yadav": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Suryakumar_Yadav_in_2023.jpg",
+        "Rashid Khan": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Rashid_Khan_in_2023.jpg",
+        "Jos Buttler": "https://upload.wikimedia.org/wikipedia/commons/6/69/Jos_Buttler_in_2023.jpg",
+        "Heinrich Klaasen": "https://upload.wikimedia.org/wikipedia/commons/0/05/Heinrich_Klaasen_in_2023.jpg",
+        "Travis Head": "https://upload.wikimedia.org/wikipedia/commons/6/69/Travis_Head_in_2023.jpg",
+        "Yashasvi Jaiswal": "https://upload.wikimedia.org/wikipedia/commons/2/22/Yashasvi_Jaiswal_in_2023.jpg",
+        "Rinku Singh": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Rinku_Singh_in_2023.jpg",
+        "Tilak Varma": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Tilak_Varma_in_2023.jpg",
+        "Abhishek Sharma": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Abhishek_Sharma_in_2023.jpg",
+        "Tristan Stubbs": "https://upload.wikimedia.org/wikipedia/commons/8/87/Tristan_Stubbs_in_2023.jpg",
+        "Axar Patel": "https://upload.wikimedia.org/wikipedia/commons/6/63/Axar_Patel_in_2023.jpg",
+        "Mohammed Siraj": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Mohammed_Siraj_in_2023.jpg",
+        "Mohammed Shami": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Mohammed_Shami_in_2023.jpg",
+        "Arshdeep Singh": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Arshdeep_Singh_in_2023.jpg",
+        "Kuldeep Yadav": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Kuldeep_Yadav_in_2023.jpg",
+        "Yuzvendra Chahal": "https://upload.wikimedia.org/wikipedia/commons/2/25/Yuzvendra_Chahal_in_2023.jpg",
+        "Ishan Kishan": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Ishan_Kishan_in_2023.jpg",
+        "David Miller": "https://upload.wikimedia.org/wikipedia/commons/4/4e/David_Miller_in_2023.jpg",
+        "Glenn Maxwell": "https://upload.wikimedia.org/wikipedia/commons/6/69/Glenn_Maxwell_in_2023.jpg",
+        "Faf du Plessis": "https://upload.wikimedia.org/wikipedia/commons/5/52/Faf_du_Plessis_in_2023.jpg"
+    };
+
+    // HYPOTHETICAL 2026 ROSTERS FOR RETENTION
+    const ORIGINAL_ROSTERS = {
+        'CSK': ["MS Dhoni", "Ruturaj Gaikwad", "Sanju Samson", "Ayush Mhatre", "Dewald Brevis", "Urvil Patel", "Shivam Dube", "Noor Ahmad", "Nathan Ellis", "Shreyas Gopal", "Khaleel Ahmed", "Ramakrishna Ghosh", "Mukesh Choudhary", "Jamie Overton", "Gurjapneet Singh", "Anshul Kamboj", "Prashant Veer", "Kartik Sharma", "Rahul Chahar", "Akeal Hosein", "Matt Henry", "Matthew Short", "Sarfaraz Khan", "Zak Foulkes", "Aman Khan"],
+        'DC': ["KL Rahul", "Nitish Rana", "Abishek Porel", "Ajay Mandal", "Ashutosh Sharma", "Axar Patel", "Dushmantha Chameera", "Karun Nair", "Kuldeep Yadav", "Madhav Tiwari", "Mitchell Starc", "Sameer Rizvi", "T Natarajan", "Tripurana Vijay", "Tristan Stubbs", "Vipraj Nigam", "Mukesh Kumar", "Auqib Nabi Dar", "Pathum Nissanka", "David Miller", "Ben Duckett", "Lungi Ngidi", "Kyle Jamieson", "Prithvi Shaw", "Sahil Parikh"],
+        'GT': ["Shubman Gill", "Rashid Khan", "Sai Sudharsan", "Anuj Rawat", "Kumar Kushagra", "Manav Suthar", "Jayant Yadav", "Ishant Sharma", "R Sai Kishore", "Mohammad Siraj", "Prasidh Krishna", "B Sai Sudharsan", "Washington Sundar", "Gurnoor Singh Brar", "Shahrukh Khan", "Jos Buttler", "Kagiso Rabada", "Rahul Tewatia", "Jason Holder", "Tom Banton", "Ashok Sharma", "Luke Wood", "Prithvi Raj"],
+        'KKR': ["Ajinkya Rahane", "Angkrish Raghuvanshi", "Anukul Roy", "Manish Pandey", "Ramandeep Singh", "Rinku Singh", "Sunil Narine", "Umran Malik", "Harshit Rana", "Vaibhav Arora", "Varun Chakravarthy", "Rovman Powell", "Cameron Green", "Mustafizur Rahman", "Matheesha Pathirana", "Tejasvi Singh", "Finn Allen", "Rachin Ravindra", "Tim Seifert", "Akash Deep", "Rahul Tripathi", "Prashant Solanki", "Kartik Tyagi", "Sarthak Ranjan", "Daksh Kamra"],
+        'LSG': ["Rishabh Pant", "Nicholas Pooran", "Aiden Markram", "Mitchell Marsh", "Ayush Badoni", "Abdul Samad", "Avesh Khan", "Mohammed Shami", "Mayank Yadav", "Digvesh Rathi", "Akash Singh", "Arjun Tendulkar", "Himmat Singh", "Manimaran Siddharth", "Matthew Breetzke", "Mohsin Khan", "Shahbaz Ahmed", "Prince Yadav", "Josh Inglis", "Mukul Choudhary", "Akshat Raghuwanshi", "Wanindu Hasaranga", "Anrich Nortje", "Naman Tiwari"],
+        'MI': ["Rohit Sharma", "Hardik Pandya", "Suryakumar Yadav", "Jasprit Bumrah", "Tilak Varma", "Deepak Chahar", "Mitchell Santner", "Corbin Bosch", "AM Ghazanfar", "Ashwani Kumar", "Naman Dhir", "Raj Bawa", "Robin Minz", "Ryan Rickelton", "Shardul Thakur", "Sherfane Rutherford", "Mayank Markande", "Will Jacks", "Quinton de Kock", "Atharva Ankolekar", "Mohammad Izhar", "Danish Malewar", "Mayank Rawat"],
+        'PBKS': ["Shreyas Iyer", "Arshdeep Singh", "Yuzvendra Chahal", "Marcus Stoinis", "Lockie Ferguson", "Marco Jansen", "Harnoor Singh Pannu", "Harpreet Brar", "Nehal Wadhera", "Vishnu Vinod", "Vyshak Vijaykumar", "Prabhsimran Singh", "Priyansh Arya", "Pyla Avinash", "Shashank Singh", "Suryansh Shedge", "Xavier Bartlett", "Yash Thakur", "Ben Dwarshuis", "Cooper Connolly", "Vishal Nishad", "Pravin Dubey"],
+        'RR': ["Yashasvi Jaiswal", "Riyan Parag", "Dhruv Jurel", "Jofra Archer", "Kwena Maphaka", "Lhuan-Dre Pretorius", "Nandre Burger", "Sandeep Sharma", "Shimron Hetmyer", "Shubham Dubey", "Tushar Deshpande", "Vaibhav Suryavanshi", "Yudhvir Singh Charak", "Donovan Ferreira", "Ravindra Jadeja", "Sam Curran", "Ravi Bishnoi", "Adam Milne", "Ravi Singh", "Sushant Mishra", "Kuldeep Sen", "Vignesh Puthur", "Yash Punja", "Aman Rao", "Brijesh Sharma"],
+        'RCB': ["Virat Kohli", "Rajat Patidar", "Devdutt Padikkal", "Tim David", "Phil Salt", "Jitesh Sharma", "Krunal Pandya", "Romario Shepherd", "Bhuvneshwar Kumar", "Yash Dayal", "Josh Hazlewood", "Suyash Sharma", "Abhinandan Singh", "Jacob Bethell", "Nuwan Thushara", "Venkatesh Iyer", "Mangesh Yadav", "Jacob Duffy", "Jordan Cox", "Satvik Deswal", "Vicky Ostwal", "Vihaan Malhotra", "Kanishk Chouhan"],
+        'SRH': ["Pat Cummins", "Travis Head", "Abhishek Sharma", "Heinrich Klaasen", "Ishan Kishan", "Aniket Verma", "R Smaran", "Nitish Kumar Reddy", "Harsh Dubey", "Kamindu Mendis", "Harshal Patel", "Brydon Carse", "Jaydev Unadkat", "Eshan Malinga", "Zeeshan Ansari", "Liam Livingstone", "Jack Edwards", "Salil Arora", "Shivam Mavi", "Shivang Kumar", "Sakib Hussain", "Omkar Tarmale", "Amit Kumar", "Praful Hinge", "Krains Fuletra"]
+    };
+
+    /* UPDATED SETS */
+    const RAW_SETS = [
+        { id: "M", title: "SET M: MARQUEE PLAYERS", base: 2.0, rating: 5, role: "STAR", players: ["Virat Kohli (India)", "Rohit Sharma (India)", "MS Dhoni (India)", "Jasprit Bumrah (India)", "Hardik Pandya (India)", "Ravindra Jadeja (India)", "Suryakumar Yadav (India)", "Rishabh Pant (India)", "Shubman Gill (India)", "Pat Cummins (Australia)", "Mitchell Starc (Australia)", "Rashid Khan (Afghanistan)", "Jos Buttler (England)", "Heinrich Klaasen (South Africa)", "Travis Head (Australia)", "Shreyas Iyer (India)", "KL Rahul (India)", "Sanju Samson (India)", "Ruturaj Gaikwad (India)"] },
+        { id: "1", title: "SET 1: CAPPED BATTERS", base: 1.5, rating: 4, role: "BAT", players: ["Yashasvi Jaiswal", "Rinku Singh", "Tilak Varma", "Sai Sudharsan", "Abhishek Sharma", "Tristan Stubbs", "Will Jacks", "Rajat Patidar", "Rahul Tripathi [Rating:3]", "Devdutt Padikkal [Rating:2]", "Manish Pandey [Rating:2]", "Ajinkya Rahane [Rating:3]", "David Miller", "Shimron Hetmyer", "Aiden Markram", "Nitish Rana", "Tim David", "Prithvi Shaw [Rating:2]", "Finn Allen", "Pathum Nissanka", "Ben Duckett", "Rovman Powell", "Sherfane Rutherford", "Tom Banton", "Karun Nair [Rating:2]", "Sarfaraz Khan", "Matthew Breetzke", "Dewald Brevis [Rating:3]"] },
+        { id: "2", title: "SET 2: CAPPED ALL-ROUNDERS", base: 1.5, rating: 4, role: "ALL", players: ["Sam Curran", "Cameron Green", "Marcus Stoinis", "Liam Livingstone", "Sunil Narine", "Axar Patel", "Washington Sundar", "Shivam Dube", "Krunal Pandya", "Venkatesh Iyer", "Nitish Kumar Reddy", "Ramandeep Singh", "Marco Jansen", "Rachin Ravindra", "Mitchell Marsh", "Wanindu Hasaranga", "Mitchell Santner", "Romario Shepherd", "Jason Holder", "Shardul Thakur", "Shahbaz Ahmed", "Jayant Yadav [Rating:2]", "Kamindu Mendis", "Matthew Short", "Jamie Overton", "Cooper Connolly", "Jacob Bethell", "Zak Foulkes"] },
+        { id: "3", title: "SET 3: CAPPED WICKETKEEPERS", base: 1.5, rating: 4, role: "WK", players: ["Nicholas Pooran", "Ishan Kishan", "Quinton de Kock", "Phil Salt", "Josh Inglis", "Dhruv Jurel", "Jitesh Sharma", "Ryan Rickelton", "Tim Seifert", "Donovan Ferreira", "Jordan Cox"] },
+        { id: "4", title: "SET 4: CAPPED FAST BOWLERS", base: 1.5, rating: 4, role: "BOWL", players: ["Mohammed Shami", "Mohammed Siraj", "Arshdeep Singh", "Kagiso Rabada", "Jofra Archer", "Anrich Nortje", "Josh Hazlewood", "Bhuvneshwar Kumar", "Deepak Chahar", "T Natarajan", "Harshal Patel", "Avesh Khan", "Mukesh Kumar", "Khaleel Ahmed", "Prasidh Krishna", "Umran Malik", "Matheesha Pathirana", "Mustafizur Rahman", "Lockie Ferguson", "Nathan Ellis", "Nandre Burger", "Kwena Maphaka", "Matt Henry", "Adam Milne", "Lungi Ngidi", "Jaydev Unadkat", "Ishant Sharma", "Sandeep Sharma", "Shivam Mavi", "Mayank Yadav", "Harshit Rana", "Akash Deep", "Kuldeep Sen", "Tushar Deshpande", "Dushmantha Chameera", "Nuwan Thushara", "Jacob Duffy", "Xavier Bartlett", "Ben Dwarshuis", "Brydon Carse", "Luke Wood", "Kyle Jamieson"] },
+        { id: "5", title: "SET 5: CAPPED SPINNERS", base: 1.5, rating: 4, role: "BOWL", players: ["Kuldeep Yadav", "Yuzvendra Chahal", "Ravi Bishnoi", "Varun Chakravarthy", "Rahul Chahar", "Noor Ahmad", "Akeal Hosein", "R Sai Kishore", "Mayank Markande [Rating:3]", "Shreyas Gopal [Rating:2]", "AM Ghazanfar"] },
+        { id: "6", title: "SET 6: UNCAPPED BATTERS", base: 0.3, rating: 2, role: "BAT", players: ["Nehal Wadhera", "Ashutosh Sharma", "Sameer Rizvi", "Ayush Badoni", "Abdul Samad", "Angkrish Raghuvanshi", "Shashank Singh", "Ayush Mhatre", "Vaibhav Suryavanshi", "Shubham Dubey", "Priyansh Arya", "Harnoor Singh Pannu", "Himmat Singh", "Naman Dhir", "Aniket Verma", "R Smaran", "Sahil Parikh", "Aman Rao", "Danish Malewar", "Mayank Rawat", "Ramakrishna Ghosh", "Sarthak Ranjan", "Daksh Kamra", "Akshat Raghuwanshi", "Vishal Nishad", "Vihaan Malhotra", "Ravi Singh", "Satvik Deswal", "Pyla Avinash"] },
+        { id: "7", title: "SET 7: UNCAPPED ALL-ROUNDERS", base: 0.3, rating: 2, role: "ALL", players: ["Rahul Tewatia", "Shahrukh Khan", "Harpreet Brar", "Anukul Roy", "Arjun Tendulkar", "Raj Bawa", "Corbin Bosch", "Jack Edwards", "Aman Khan", "Prashant Veer", "Ajay Mandal", "Tripurana Vijay", "Harsh Dubey", "Suryansh Shedge", "Atharva Ankolekar", "Prince Yadav", "Brijesh Sharma"] },
+        { id: "8", title: "SET 8: UNCAPPED WICKETKEEPERS", base: 0.3, rating: 2, role: "WK", players: ["Abishek Porel", "Prabhsimran Singh", "Anuj Rawat", "Robin Minz", "Vishnu Vinod", "Kumar Kushagra", "Lhuan-Dre Pretorius", "Urvil Patel", "Kartik Sharma", "Salil Arora", "Tejasvi Singh"] },
+        { id: "9", title: "SET 9: UNCAPPED FAST BOWLERS", base: 0.3, rating: 2, role: "BOWL", players: ["Yash Dayal", "Vyshak Vijaykumar", "Mohsin Khan", "Vaibhav Arora", "Yash Thakur", "Mukesh Choudhary", "Kartik Tyagi", "Anshul Kamboj", "Gurjapneet Singh", "Madhav Tiwari", "Gurnoor Singh Brar", "Ashok Sharma", "Prithvi Raj", "Digvesh Rathi", "Akash Singh", "Mukul Choudhary", "Naman Tiwari", "Ashwani Kumar", "Mohammad Izhar", "Yudhvir Singh Charak", "Sushant Mishra", "Yash Punja", "Abhinandan Singh", "Mangesh Yadav", "Eshan Malinga", "Shivang Kumar", "Sakib Hussain", "Amit Kumar", "Praful Hinge", "Auqib Nabi Dar", "Omkar Tarmale"] },
+        { id: "10", title: "SET 10: UNCAPPED SPINNERS", base: 0.3, rating: 2, role: "BOWL", players: ["Suyash Sharma", "Manimaran Siddharth", "Prashant Solanki", "Vicky Ostwal", "Manav Suthar", "Zeeshan Ansari", "Vipraj Nigam", "Pravin Dubey", "Vignesh Puthur", "Kanishk Chouhan", "Krains Fuletra", "Vishal Nishad"] }
+    ];
+
+    let AUCTION_QUEUE = [];
+    const RETAINED_PLAYERS_POOL = new Set();
+    let currentTeamValuations = {};
+
+    // ================= RETENTION MANAGER =================
+    class RetentionManager {
+        constructor() { this.selected = []; this.renderCSKSelection(); }
+        renderCSKSelection() {
+            const list = document.getElementById('csk-roster-list'); list.innerHTML = '';
+            ORIGINAL_ROSTERS['CSK'].forEach(name => {
+                const div = document.createElement('div'); div.className = 'ret-item';
+                let type = this.getPlayerCostType(name);
+                div.innerHTML = `<span>${name}</span> <span style="font-size:0.8rem; color:var(--text-muted);">${type}</span> <span class="ret-price-tag" id="price-${name.replace(/\s/g,'')}"></span>`;
+                div.onclick = () => this.toggleSelection(name, div); list.appendChild(div);
+            });
+        }
+        getPlayerCostType(name) {
+            if(name.includes("MS Dhoni")) return "Uncapped (Rule)";
+            if(name.includes("Ayush Mhatre") || name.includes("Urvil Patel")) return "Uncapped";
+            if(name.includes("Dewald Brevis")) return "Capped";
+            for(let s of RAW_SETS) { if(s.players.some(p => p.includes(name))) return s.base > 0.5 ? "Capped" : "Uncapped"; }
+            return "Uncapped";
+        }
+        toggleSelection(name, div) {
+            if(this.selected.includes(name)) { this.selected = this.selected.filter(n => n !== name); div.classList.remove('selected'); document.getElementById(`price-${name.replace(/\s/g,'')}`).innerText = ""; } 
+            else { 
+                let capped = this.selected.filter(n => this.getPlayerCostType(n) === "Capped").length;
+                let uncapped = this.selected.filter(n => this.getPlayerCostType(n).includes("Uncapped")).length;
+                let isCurrCapped = (this.getPlayerCostType(name) === "Capped");
+                if(this.selected.length >= 6) { alert("Max 6 Retentions allowed!"); return; }
+                if(isCurrCapped && capped >= 5) { alert("Max 5 Capped players allowed!"); return; }
+                if(!isCurrCapped && uncapped >= 2) { alert("Max 2 Uncapped players allowed!"); return; }
+                this.selected.push(name); div.classList.add('selected'); 
+            }
+            this.updateSummary();
+        }
+        updateSummary() {
+            let sorted = [...this.selected].sort((a,b) => (this.getPlayerCostType(b)==="Capped") - (this.getPlayerCostType(a)==="Capped"));
+            let cost = 0; let caps = 0;
+            document.querySelectorAll('.ret-price-tag').forEach(e => e.innerText = '');
+            sorted.forEach(name => {
+                let type = this.getPlayerCostType(name); let pCost = 4;
+                if(type === "Capped") { caps++; if(caps===1)pCost=18; else if(caps===2)pCost=14; else if(caps===3)pCost=11; else if(caps===4)pCost=18; else if(caps===5)pCost=14; }
+                cost += pCost; document.getElementById(`price-${name.replace(/\s/g,'')}`).innerText = `₹${pCost} Cr`;
+            });
+            document.getElementById('ret-count-disp').innerText = `${this.selected.length}/6`; document.getElementById('ret-cost-disp').innerText = `₹${cost} Cr`; document.getElementById('ret-purse-disp').innerText = `₹${(120 - cost).toFixed(2)} Cr`;
+        }
+        confirmRetentions() {
+            if(!confirm("Confirm these retentions?")) return;
+            audioManager.startMusic();
+            let sorted = [...this.selected].sort((a,b) => (this.getPlayerCostType(b)==="Capped") - (this.getPlayerCostType(a)==="Capped"));
+            let caps = 0;
+            sorted.forEach(name => {
+                let type = this.getPlayerCostType(name); let pCost = 4;
+                if(type === "Capped") { caps++; if(caps===1)pCost=18; else if(caps===2)pCost=14; else if(caps===3)pCost=11; else if(caps===4)pCost=18; else if(caps===5)pCost=14; }
+                this.addPlayerToTeam('CSK', name, pCost);
+            });
+            this.simulateAIRetentions();
+            document.getElementById('ret-select-view').style.display = 'none'; document.getElementById('ret-result-view').style.display = 'flex'; this.renderRetentionResults();
+        }
+        simulateAIRetentions() {
+            TEAMS.forEach(team => {
+                if(team.isUser) return;
+                const roster = ORIGINAL_ROSTERS[team.id]; if(!roster) return;
+                let stars = [];
+                roster.forEach(name => {
+                    let rating = 1; for(let s of RAW_SETS) { if(s.players.some(p => p.includes(name))) { rating = s.rating; break; } }
+                    if(rating >= 4) stars.push({name, r: rating});
+                });
+                stars.sort((a,b) => b.r - a.r);
+                let count = Math.floor(Math.random() * 3) + 2; 
+                let retained = stars.slice(0, count);
+                let caps = 0;
+                retained.forEach(p => {
+                    let type = this.getPlayerCostType(p.name); let pCost = 4;
+                    if(type === "Capped") { caps++; if(caps===1)pCost=18; else if(caps===2)pCost=14; else if(caps===3)pCost=11; else if(caps===4)pCost=18; else if(caps===5)pCost=14; }
+                    this.addPlayerToTeam(team.id, p.name, pCost);
+                });
+            });
+        }
+        addPlayerToTeam(tid, rawName, cost) {
+            const team = TEAMS.find(t => t.id === tid); team.purse -= cost; RETAINED_PLAYERS_POOL.add(rawName);
+            let role = "ALL"; let country = "🇮🇳 India"; let isOverseas = false;
+            for(let s of RAW_SETS) {
+                const match = s.players.find(p => p.includes(rawName));
+                if(match) { role = s.role; if(match.includes("Overseas") || match.includes("Australia") || match.includes("England") || match.includes("South Africa") || match.includes("Afghanistan")) { country = "✈️ Overseas"; isOverseas = true; } break; }
+            }
+            if(role === 'BAT') team.needs.BAT--; else if(role === 'BOWL') team.needs.BOWL--; else if(role === 'WK') team.needs.WK--; else team.needs.ALL--;
+            
+            // Image logic
+            let img = PLAYER_IMAGES[rawName] || `https://ui-avatars.com/api/?name=${rawName.replace(' ','+')}&size=256&background=random&color=fff`;
+
+            team.players.push({ n: rawName, role: role, country: country, isOverseas: isOverseas, soldPrice: cost, img: img });
+        }
+        renderRetentionResults() {
+            const grid = document.getElementById('ai-ret-grid');
+            TEAMS.forEach(t => {
+                const pNames = t.players.map(p => p.n).join(', ');
+                grid.innerHTML += `<div class="team-box"><div class="team-header" style="background:${t.color}; color:${t.text}"><img src="${t.logo}"> ${t.name}</div><div class="player-list" style="max-height:100px; font-size:0.8rem; color:#888;">${pNames || "None"}</div><div class="team-stats">Purse: ₹${t.purse.toFixed(2)} Cr</div></div>`;
+            });
+        }
+        startAuction() { document.getElementById('retention-modal').classList.remove('active'); game.init(); renderSquads(); }
+    }
+    const retentionManager = new RetentionManager();
+
+    // ================= AUCTION ENGINE =================
+    class Game {
+        constructor() {
+            this.qIndex = -1; this.currentBid = 0; this.holder = null; this.timer = 10; this.interval = null; this.aiTimeout = null; this.sold = false; this.isPaused = false;
+            this.ui = {
+                price: document.getElementById('bid-price'), leaderText: document.getElementById('leader-text'), leaderLogo: document.getElementById('leader-logo'), timer: document.getElementById('timer-bar'),
+                feed: document.getElementById('feed-list'), stamp: document.getElementById('sold-stamp'), sub: document.getElementById('sold-sub'), bidBtn: document.getElementById('btn-bid'),
+                bidMainText: document.getElementById('btn-main-text'), bidAmt: document.getElementById('btn-bid-amt'), nextBtn: document.getElementById('btn-next'), simPlayerBtn: document.getElementById('btn-sim-player'),
+                simSetBtn: document.getElementById('btn-sim-set'), passBtn: document.getElementById('btn-pass'), pauseBtn: document.getElementById('btn-pause'), purse: document.getElementById('user-purse'),
+                count: document.getElementById('squad-count'), osCount: document.getElementById('os-count')
+            };
+            this.ui.bidBtn.onclick = () => this.humanBid(); this.ui.nextBtn.onclick = () => this.nextPlayer();
+        }
+        init() { this.prepareAuction(); this.renderSets(); this.nextPlayer(); }
+        
+        prepareAuction() {
+            AUCTION_QUEUE = [];
+            RAW_SETS.forEach(set => {
+                let shuffledNames = set.players.sort(() => Math.random() - 0.5);
+                shuffledNames.forEach(rawName => {
+                    let cleanName = rawName.split('(')[0].split('[')[0].trim();
+                    let isRetained = false; TEAMS.forEach(t => { if(t.players.some(p => p.n === cleanName || rawName.includes(p.n))) isRetained = true; });
+                    if(isRetained) return;
+
+                    let name = cleanName; let country = "🇮🇳 India"; let isOverseas = false;
+                    if (rawName.includes("Overseas") || rawName.includes("Australia") || rawName.includes("England") || rawName.includes("South Africa") || rawName.includes("Afghanistan")) { country = "✈️ Overseas"; isOverseas = true; }
+                    
+                    let rating = set.rating;
+                    if(rawName.includes("Rating:")) rating = parseInt(rawName.split("Rating:")[1].replace("]","").trim());
+
+                    let marketValue = 0.5;
+                    if(rating === 5) marketValue = 11 + (Math.random() * 12);
+                    else if(rating === 4) marketValue = 5 + (Math.random() * 8);
+                    else if(rating === 3) marketValue = 2 + (Math.random() * 4);
+                    else if(rating === 2) marketValue = 0.5 + (Math.random() * 2);
+                    else marketValue = 0.2 + (Math.random() * 0.5);
+
+                    let form = "Normal";
+                    if(rating < 5 && Math.random() < 0.4) { form = "❄️ Cold"; marketValue *= 0.5; }
+                    
+                    // IMPROVED IMAGE FALLBACK LOGIC
+                    let img = PLAYER_IMAGES[name];
+                    if(!img) {
+                        // Use a reliable avatar generator if specific image not found
+                        img = `https://ui-avatars.com/api/?name=${name.replace(' ','+')}&size=256&background=0D47A1&color=fff&font-size=0.33&bold=true`;
+                    }
+
+                    AUCTION_QUEUE.push({ n: name, role: set.role, country: country, isOverseas: isOverseas, setName: set.title, base: set.base, r: rating, marketValue: marketValue, form: form, img: img });
+                });
+            });
+        }
+
+        renderSets() {
+            const c = document.getElementById('sets-list-container'); c.innerHTML = '';
+            let sets = {};
+            AUCTION_QUEUE.forEach(p => {
+                if(!sets[p.setName]) sets[p.setName] = [];
+                sets[p.setName].push(p);
+            });
+            for(let key in sets) {
+                c.innerHTML += `<div class="set-group"><div class="set-title-bar">${key}</div><div class="set-grid-body">${sets[key].map(p => `<div class="set-card-p"><span style="font-weight:bold;">${p.n}</span><span class="p-flag">${p.role}</span></div>`).join('')}</div></div>`;
+            }
+        }
+
+        nextPlayer() {
+            this.qIndex++; if(this.qIndex >= AUCTION_QUEUE.length) { alert("Auction Completed!"); return; }
+            const p = AUCTION_QUEUE[this.qIndex];
+            this.currentBid = p.base; this.holder = null; this.timer = 10; this.sold = false; this.isPaused = false;
+            
+            currentTeamValuations = {};
+            let eventText = "";
+            let isWar = Math.random() < 0.05;
+            let isSteal = Math.random() > 0.90;
+
+            TEAMS.forEach(t => {
+                if(t.isUser) return;
+                let v = p.marketValue;
+                
+                let progress = this.qIndex / AUCTION_QUEUE.length;
+                if(t.players.length < 18 && progress > 0.6) v *= 2.0; 
+                if(t.players.length < 15 && progress > 0.8) v *= 4.0;
+
+                let need = t.needs[p.role];
+                if(need > 3) v *= 1.5;
+                else if(need <= 0) v *= 0.1;
+
+                if(t.purse < 5) v = 0; 
+
+                v *= (0.8 + Math.random()*0.4);
+                if(isWar && Math.random() > 0.8) v *= 2.0;
+                if(isSteal) v *= 0.3;
+
+                currentTeamValuations[t.id] = v;
+            });
+
+            if(isWar) eventText = "🔥 EGO CLASH!";
+            if(isSteal) eventText = "💤 SLEEPY MARKET...";
+            
+            document.getElementById('p-name').innerText = p.n; document.getElementById('p-role').innerText = p.role; document.getElementById('p-country').innerText = p.country; document.getElementById('p-set').innerText = p.setName; 
+            
+            // Set Image with error handling
+            const imgEl = document.getElementById('p-img');
+            imgEl.src = p.img;
+            imgEl.onerror = function() { 
+                this.onerror = null; 
+                this.src = `https://ui-avatars.com/api/?name=${p.n.replace(' ','+')}&size=256&background=000&color=fff`; 
+            };
+
+            this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = `Base Price (${p.form})`; this.ui.leaderText.style.color = "#888"; this.ui.leaderLogo.style.display = 'none'; this.ui.stamp.classList.remove('active');
+            this.ui.bidBtn.style.display = 'flex'; this.ui.simPlayerBtn.style.display = 'flex'; this.ui.simSetBtn.style.display = 'flex'; this.ui.passBtn.style.display = 'block'; this.ui.pauseBtn.style.display = 'block'; this.ui.nextBtn.style.display = 'none';
+            this.ui.pauseBtn.innerText = "⏸"; this.ui.pauseBtn.classList.remove('active'); this.ui.timer.classList.remove('paused'); this.ui.timer.classList.remove('critical');
+            this.ui.feed.innerHTML = eventText ? `<div class="feed-item"><span class="event-text">${eventText}</span></div>` : '';
+            this.updateBidBtn(); this.startTimer(); this.triggerAI();
+        }
+
+        startTimer() { 
+            clearInterval(this.interval); 
+            this.interval = setInterval(() => { 
+                if(this.sold || this.isPaused) return; 
+                this.timer -= 0.1; 
+                this.ui.timer.style.width = (this.timer * 10) + "%"; 
+                if(this.timer < 3) this.ui.timer.classList.add('critical'); else this.ui.timer.classList.remove('critical');
+                if(this.timer <= 0) this.sell(); 
+            }, 100); 
+        }
+        togglePause() { this.isPaused = !this.isPaused; if(this.isPaused) { this.ui.pauseBtn.innerText = "▶"; this.ui.pauseBtn.classList.add('active'); this.ui.timer.classList.add('paused'); clearTimeout(this.aiTimeout); } else { this.ui.pauseBtn.innerText = "⏸"; this.ui.pauseBtn.classList.remove('active'); this.ui.timer.classList.remove('paused'); this.triggerAI(); } }
+        
+        triggerAI() { 
+            clearTimeout(this.aiTimeout); 
+            if(this.sold || this.isPaused) return; 
+            let delay = 800 + (Math.random() * 1000); 
+            if(this.timer < 3 && Math.random() > 0.4) { delay = (this.timer * 1000) - 100; if(delay<100) delay=100; }
+            this.aiTimeout = setTimeout(() => this.processAIBid(), delay); 
+        }
+
+        canTeamBid(team, amt, player) { if(team.purse < amt) return false; if(team.players.length >= 25) return false; if(player.isOverseas) { const osCount = team.players.filter(p => p.isOverseas).length; if(osCount >= 8) return false; } return true; }
+
+        processAIBid() {
+            if(this.sold || this.isPaused) return;
+            const p = AUCTION_QUEUE[this.qIndex];
+            
+            // Jump Bids
+            let jump = 0;
+            if(Math.random() < 0.1 && this.currentBid > 2) jump = 1.0; 
+            let nextBid = this.getNextBid() + jump;
+            
+            const interested = TEAMS.filter(t => {
+                if(t.isUser || t.id === this.holder) return false;
+                if(!this.canTeamBid(t, nextBid, p)) return false;
+                let maxVal = currentTeamValuations[t.id] || 0;
+                return nextBid <= maxVal;
+            });
+            
+            // --- MANDATORY FILL LOGIC (Live Bidding) ---
+            if(interested.length === 0 && this.holder === null) {
+                // If unsold, check if any team has < 18 players
+                const desperate = TEAMS.filter(t => !t.isUser && t.players.length < 18 && this.canTeamBid(t, nextBid, p));
+                if(desperate.length > 0) {
+                    // Pick random desperate team
+                    this.bid(desperate[Math.floor(Math.random()*desperate.length)].id, nextBid);
+                    return;
+                }
+            }
+
+            if(interested.length > 0) {
+                const bidder = interested[Math.floor(Math.random() * interested.length)];
+                this.bid(bidder.id, nextBid);
+            }
+        }
+
+        getNextBid() {
+            let inc = 0.05;
+            if(this.currentBid >= 10) inc = 0.50; else if(this.currentBid >= 2) inc = 0.20; else if(this.currentBid >= 1) inc = 0.10;
+            return this.currentBid + inc;
+        }
+
+        bid(teamId, customAmt = null) {
+            if(this.sold) return;
+            const team = TEAMS.find(t => t.id === teamId); const amt = customAmt || ((this.holder) ? this.getNextBid() : this.currentBid);
+            if(!this.canTeamBid(team, amt, AUCTION_QUEUE[this.qIndex])) return;
+            this.currentBid = amt; this.holder = teamId; this.timer = 10;
+            this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = team.name; this.ui.leaderText.style.color = team.color; this.ui.leaderLogo.src = team.logo; this.ui.leaderLogo.style.display = 'block';
+            this.updateBidBtn();
+            const row = document.createElement('div'); row.className = 'feed-item'; if(team.isUser) row.classList.add('user-bid');
+            row.innerHTML = `<span><img src="${team.logo}" class="feed-logo"> ${team.id}</span> <b>₹${amt.toFixed(2)}</b>`;
+            this.ui.feed.prepend(row);
+            this.triggerAI();
+        }
+        humanBid() { if(this.holder !== 'CSK') this.bid('CSK'); }
+        pass() { } 
+
+        quickSim(silent = false) {
+            if(this.sold) return;
+            let loops = 0;
+            const p = AUCTION_QUEUE[this.qIndex];
+            
+            if(Object.keys(currentTeamValuations).length === 0) {
+                TEAMS.forEach(t => {
+                    if(!t.isUser) {
+                         let v = p.marketValue * (0.5 + Math.random() * 1.0);
+                         if(t.players.length < 18) v *= 2.0; 
+                         currentTeamValuations[t.id] = v;
+                    }
+                });
+            }
+
+            while(loops < 100) {
+                const next = this.getNextBid();
+                const candidates = TEAMS.filter(t => {
+                    if(t.isUser || t.id === this.holder) return false;
+                    if(!this.canTeamBid(t, next, p)) return false;
+                    return next <= (currentTeamValuations[t.id] || 0);
+                });
+
+                if(candidates.length === 0) {
+                    if(!this.holder) {
+                         // FORCE BUY IN SIM
+                         const desperate = TEAMS.filter(t => !t.isUser && t.players.length < 18 && this.canTeamBid(t, next, p));
+                         if(desperate.length > 0) {
+                             this.currentBid = next; this.holder = desperate[Math.floor(Math.random()*desperate.length)].id; break;
+                         }
+                    }
+                    break;
+                }
+                const winner = candidates[Math.floor(Math.random() * candidates.length)];
+                this.currentBid = next; this.holder = winner.id;
+                loops++;
+            }
+            if(!silent) this.sell();
+        }
+
+        simSet() {
+            if(!confirm("Simulate the rest of this set?")) return;
+            const currentSetName = AUCTION_QUEUE[this.qIndex].setName; let playersProcessed = 0;
+            this.quickSim(true); this.sell(true); playersProcessed++;
+
+            while(this.qIndex + 1 < AUCTION_QUEUE.length) {
+                const nextP = AUCTION_QUEUE[this.qIndex + 1];
+                if(nextP.setName !== currentSetName) break;
+                this.qIndex++; this.currentBid = nextP.base; this.holder = null;
+                
+                let loops = 0;
+                let simValuations = {};
+                TEAMS.forEach(t => {
+                   if(!t.isUser) {
+                       let v = nextP.marketValue * (0.5 + Math.random() * 1.0);
+                       if(t.players.length < 18) v *= 3.0; // Aggressive
+                       simValuations[t.id] = v;
+                   }
+                });
+
+                while(loops < 100) {
+                    const next = this.currentBid + (this.currentBid >= 10 ? 0.5 : (this.currentBid >= 2 ? 0.2 : 0.05));
+                    const candidates = TEAMS.filter(t => {
+                        if(t.isUser) return false;
+                        if(!this.canTeamBid(t, next, nextP)) return false;
+                        return next <= (simValuations[t.id] || 0);
+                    });
+                    
+                    if(candidates.length === 0) {
+                        if(!this.holder) {
+                            // FORCE BUY IN BULK SIM
+                            const desperate = TEAMS.filter(t => !t.isUser && t.players.length < 18 && this.canTeamBid(t, next, nextP));
+                            if(desperate.length > 0) {
+                                 this.currentBid = next; this.holder = desperate[Math.floor(Math.random()*desperate.length)].id; break;
+                            }
+                        }
+                        break;
+                    }
+
+                    const winner = candidates[Math.floor(Math.random() * candidates.length)];
+                    this.currentBid = next; this.holder = winner.id;
+                    loops++;
+                }
+
+                if(this.holder) {
+                    const t = TEAMS.find(x => x.id === this.holder); nextP.soldPrice = this.currentBid; t.purse -= this.currentBid; t.players.push(nextP);
+                    if(nextP.role === 'BAT') t.needs.BAT--; else if(nextP.role === 'BOWL') t.needs.BOWL--; else if(nextP.role === 'WK') t.needs.WK--; else t.needs.ALL--;
+                }
+                playersProcessed++;
+            }
+            renderSquads();
+            const summary = document.createElement('div'); summary.className = 'feed-item'; summary.style.background = '#443355'; summary.innerHTML = `<span>⏩ Simulated ${playersProcessed} players</span>`; this.ui.feed.prepend(summary);
+            if(this.qIndex >= AUCTION_QUEUE.length - 1) { alert("Auction Completed!"); } else { this.nextPlayer(); }
+        }
+
+        sell(silent = false) {
+            this.sold = true; clearInterval(this.interval); clearTimeout(this.aiTimeout); let resultText = "UNSOLD";
+            const p = AUCTION_QUEUE[this.qIndex];
+            if(this.holder) {
+                const t = TEAMS.find(x => x.id === this.holder); p.soldPrice = this.currentBid; t.purse -= this.currentBid; t.players.push(p); resultText = t.id;
+                if(p.role === 'BAT') t.needs.BAT--; else if(p.role === 'BOWL') t.needs.BOWL--; else if(p.role === 'WK') t.needs.WK--; else t.needs.ALL--;
+                if(!silent) { this.ui.stamp.classList.add('active'); this.ui.stamp.style.borderColor = t.color; this.ui.stamp.style.color = t.color; this.ui.sub.innerText = `SOLD TO ${t.id}`; this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = t.name; this.ui.leaderLogo.src = t.logo; this.ui.leaderLogo.style.display = 'block'; }
+                if(t.isUser) { this.ui.purse.innerText = `₹ ${t.purse.toFixed(2)} Cr`; this.ui.count.innerText = t.players.length; this.ui.osCount.innerText = t.players.filter(p=>p.isOverseas).length; }
+            } else if(!silent) { this.ui.stamp.classList.add('active'); this.ui.stamp.style.borderColor = "#fff"; this.ui.stamp.style.color = "#fff"; this.ui.sub.innerText = "UNSOLD"; }
+            if(!silent) { this.ui.bidBtn.style.display = 'none'; this.ui.simPlayerBtn.style.display = 'none'; this.ui.simSetBtn.style.display = 'none'; this.ui.passBtn.style.display = 'none'; this.ui.pauseBtn.style.display = 'none'; this.ui.nextBtn.style.display = 'block'; renderSquads(); }
+            return resultText;
+        }
+        updateBidBtn() {
+            const next = this.getNextBid(); const p = AUCTION_QUEUE[this.qIndex]; const csk = TEAMS[0];
+            this.ui.bidAmt.innerText = `₹ ${next.toFixed(2)} Cr`;
+            let disabled = false; let msg = "BID NOW";
+            if(this.holder === 'CSK') { disabled = true; msg = "YOU LEAD"; } else if(csk.purse < next) { disabled = true; msg = "NO FUNDS"; } else if(csk.players.length >= 25) { disabled = true; msg = "SQUAD FULL"; } else if(p.isOverseas) { const os = csk.players.filter(x => x.isOverseas).length; if(os >= 8) { disabled = true; msg = "OS LIMIT"; } }
+            this.ui.bidBtn.disabled = disabled; this.ui.bidBtn.style.opacity = disabled ? "0.5" : "1"; document.getElementById('btn-main-text').innerText = msg;
+        }
+        openSquads() { showModal('squads-modal'); }
+    }
+    function renderSquads() {
+        const c = document.getElementById('squads-container'); c.innerHTML = '';
+        TEAMS.forEach(t => {
+            let pList = '';
+            if(t.players.length === 0) pList = '<div style="color:var(--text-muted); font-style:italic; padding:10px; text-align:center;">No players yet</div>';
+            else { pList = t.players.map(p => { let flag = p.isOverseas ? "✈️" : ""; let priceTag = p.soldPrice ? `₹${p.soldPrice.toFixed(2)} Cr` : `₹${p.base ? p.base.toFixed(2) : 'Retained'} Cr`; return `<div class="p-row"><span>${flag} ${p.n} <small style="color:var(--text-muted); font-size:0.7em;">${p.role}</small></span><span class="p-price">${priceTag}</span></div>`; }).join(''); }
+            let osCount = t.players.filter(p=>p.isOverseas).length;
+            c.innerHTML += `<div class="team-box"><div class="team-header" style="background:${t.color}; color:${t.text}"><img src="${t.logo}" onerror="this.src='https://ui-avatars.com/api/?name=${t.id}'"> ${t.name}</div><div class="team-stats"><span>💰 ₹${t.purse.toFixed(2)}</span><span>👥 ${t.players.length}/25</span><span>✈️ ${osCount}/8</span></div><div class="player-list">${pList}</div></div>`;
+        });
+    }
+    function showModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    const game = new Game();
+</script>
 </body>
 </html>
