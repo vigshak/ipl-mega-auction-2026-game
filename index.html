@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPL 2026 Mega Auction - Official Edition (Fixed)</title>
+    <title>IPL 2026 Mega Auction - Official Edition (Hidden States)</title>
     <style>
         /* ================= THEME ENGINE ================= */
         :root {
@@ -606,6 +606,7 @@
                     else marketValue = 0.2 + (Math.random() * 0.5);
 
                     let form = "Normal";
+                    // Hidden Mechanic: Player Form affects Market Value internally
                     if(rating < 5 && Math.random() < 0.4) { form = "❄️ Cold"; marketValue *= 0.5; }
                     
                     // IMPROVED IMAGE FALLBACK LOGIC
@@ -663,8 +664,9 @@
                 currentTeamValuations[t.id] = v;
             });
 
-            if(isWar) eventText = "🔥 EGO CLASH!";
-            if(isSteal) eventText = "💤 SLEEPY MARKET...";
+            // HIDDEN STATE: Logic runs, but text is suppressed
+            if(isWar) eventText = ""; 
+            if(isSteal) eventText = ""; 
             
             document.getElementById('p-name').innerText = p.n; document.getElementById('p-role').innerText = p.role; document.getElementById('p-country').innerText = p.country; document.getElementById('p-set').innerText = p.setName; 
             
@@ -676,7 +678,8 @@
                 this.src = `https://ui-avatars.com/api/?name=${p.n.replace(' ','+')}&size=256&background=000&color=fff`; 
             };
 
-            this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = `Base Price (${p.form})`; this.ui.leaderText.style.color = "#888"; this.ui.leaderLogo.style.display = 'none'; this.ui.stamp.classList.remove('active');
+            // HIDDEN STATE: Removed (${p.form}) from display
+            this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = `Base Price`; this.ui.leaderText.style.color = "#888"; this.ui.leaderLogo.style.display = 'none'; this.ui.stamp.classList.remove('active');
             this.ui.bidBtn.style.display = 'flex'; this.ui.simPlayerBtn.style.display = 'flex'; this.ui.simSetBtn.style.display = 'flex'; this.ui.passBtn.style.display = 'block'; this.ui.pauseBtn.style.display = 'block'; this.ui.nextBtn.style.display = 'none';
             this.ui.pauseBtn.innerText = "⏸"; this.ui.pauseBtn.classList.remove('active'); this.ui.timer.classList.remove('paused'); this.ui.timer.classList.remove('critical');
             this.ui.feed.innerHTML = eventText ? `<div class="feed-item"><span class="event-text">${eventText}</span></div>` : '';
