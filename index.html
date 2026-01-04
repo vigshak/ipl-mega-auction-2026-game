@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPL 2026 Mega Auction - Official Edition (Hidden Stats)</title>
+    <title>IPL 2026 Mega Auction - Official Edition (Final Fix)</title>
     <style>
         /* ================= THEME ENGINE ================= */
         :root {
@@ -413,24 +413,25 @@
     const RETAINED_PLAYERS_POOL = new Set();
     let currentTeamValuations = {};
 
+    // GLOBAL KNOWN OVERSEAS LIST - Used by both Retention and Auction Logic
+    const KNOWN_OVERSEAS = [
+        "Noor Ahmad", "Nathan Ellis", "Jamie Overton", "Akeal Hosein", "Matt Henry", "Matthew Short", "Zak Foulkes", "Dewald Brevis",
+        "Mitchell Starc", "David Miller", "Ben Duckett", "Lungi Ngidi", "Kyle Jamieson", "Pathum Nissanka", "Tristan Stubbs",
+        "Rashid Khan", "Jos Buttler", "Kagiso Rabada", "Jason Holder", "Tom Banton", "Luke Wood", "Azmatullah Omarzai",
+        "Finn Allen", "Tim Seifert", "Rovman Powell", "Cameron Green", "Mustafizur Rahman", "Matheesha Pathirana", "Rachin Ravindra", "Sunil Narine", "Andre Russell",
+        "Nicholas Pooran", "Aiden Markram", "Mitchell Marsh", "Josh Inglis", "Wanindu Hasaranga", "Anrich Nortje", "Matthew Breetzke",
+        "Will Jacks", "Quinton de Kock", "Ryan Rickelton", "Sherfane Rutherford", "Corbin Bosch", "AM Ghazanfar", "Tim David",
+        "Marcus Stoinis", "Lockie Ferguson", "Marco Jansen", "Xavier Bartlett", "Ben Dwarshuis", "Cooper Connolly",
+        "Jofra Archer", "Kwena Maphaka", "Lhuan-Dre Pretorius", "Nandre Burger", "Shimron Hetmyer", "Donovan Ferreira", "Adam Milne",
+        "Phil Salt", "Romario Shepherd", "Jacob Bethell", "Nuwan Thushara", "Jacob Duffy", "Jordan Cox", "Glenn Maxwell", "Faf du Plessis",
+        "Pat Cummins", "Travis Head", "Heinrich Klaasen", "Kamindu Mendis", "Brydon Carse", "Eshan Malinga", "Liam Livingstone", "Jack Edwards"
+    ];
+
     // ================= RETENTION MANAGER (FIXED OVERSEAS) =================
     class RetentionManager {
         constructor() { 
             this.selected = []; 
             this.renderCSKSelection(); 
-            // Manual list of Overseas players appearing in retention rosters to fix detection issues
-            this.KNOWN_OVERSEAS = [
-                "Noor Ahmad", "Nathan Ellis", "Jamie Overton", "Akeal Hosein", "Matt Henry", "Matthew Short", "Zak Foulkes", "Dewald Brevis",
-                "Mitchell Starc", "David Miller", "Ben Duckett", "Lungi Ngidi", "Kyle Jamieson", "Pathum Nissanka", "Tristan Stubbs",
-                "Rashid Khan", "Jos Buttler", "Kagiso Rabada", "Jason Holder", "Tom Banton", "Luke Wood", "Azmatullah Omarzai",
-                "Finn Allen", "Tim Seifert", "Rovman Powell", "Cameron Green", "Mustafizur Rahman", "Matheesha Pathirana", "Rachin Ravindra", "Sunil Narine", "Andre Russell",
-                "Nicholas Pooran", "Aiden Markram", "Mitchell Marsh", "Josh Inglis", "Wanindu Hasaranga", "Anrich Nortje", "Matthew Breetzke",
-                "Will Jacks", "Quinton de Kock", "Ryan Rickelton", "Sherfane Rutherford", "Corbin Bosch", "AM Ghazanfar", "Tim David",
-                "Marcus Stoinis", "Lockie Ferguson", "Marco Jansen", "Xavier Bartlett", "Ben Dwarshuis", "Cooper Connolly",
-                "Jofra Archer", "Kwena Maphaka", "Lhuan-Dre Pretorius", "Nandre Burger", "Shimron Hetmyer", "Donovan Ferreira", "Adam Milne",
-                "Phil Salt", "Romario Shepherd", "Jacob Bethell", "Nuwan Thushara", "Jacob Duffy", "Jordan Cox", "Glenn Maxwell", "Faf du Plessis",
-                "Pat Cummins", "Travis Head", "Heinrich Klaasen", "Kamindu Mendis", "Brydon Carse", "Eshan Malinga", "Liam Livingstone", "Jack Edwards"
-            ];
         }
 
         renderCSKSelection() {
@@ -529,7 +530,7 @@
             }
 
             // 2. Fallback: Check explicitly against known Overseas list if not detected above
-            if(!isOverseas && this.KNOWN_OVERSEAS.some(osName => rawName.includes(osName))) {
+            if(!isOverseas && KNOWN_OVERSEAS.some(osName => rawName.includes(osName))) {
                 country = "✈️ Overseas"; 
                 isOverseas = true;
             }
@@ -589,6 +590,12 @@
                     let name = cleanName; let country = "🇮🇳 India"; let isOverseas = false;
                     if (rawName.includes("Overseas") || rawName.includes("Australia") || rawName.includes("England") || rawName.includes("South Africa") || rawName.includes("Afghanistan")) { country = "✈️ Overseas"; isOverseas = true; }
                     
+                    // FIXED: Fallback check for Overseas in Auction Phase
+                    if (!isOverseas && KNOWN_OVERSEAS.some(osName => rawName.includes(osName))) {
+                        country = "✈️ Overseas";
+                        isOverseas = true;
+                    }
+
                     let rating = set.rating;
                     if(rawName.includes("Rating:")) rating = parseInt(rawName.split("Rating:")[1].replace("]","").trim());
 
