@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPL 2026 Mega Auction - Official Edition (Hidden States)</title>
+    <title>IPL 2026 Mega Auction - Official Edition (Fixed Budget)</title>
     <style>
         /* ================= THEME ENGINE ================= */
         :root {
@@ -413,26 +413,24 @@
     const RETAINED_PLAYERS_POOL = new Set();
     let currentTeamValuations = {};
 
-    // ================= KNOWN OVERSEAS LIST =================
-    const KNOWN_OVERSEAS_PLAYERS = [
-        "Noor Ahmad", "Nathan Ellis", "Jamie Overton", "Akeal Hosein", "Matt Henry", "Matthew Short", "Zak Foulkes", "Dewald Brevis",
-        "Mitchell Starc", "David Miller", "Ben Duckett", "Lungi Ngidi", "Kyle Jamieson", "Pathum Nissanka", "Tristan Stubbs",
-        "Rashid Khan", "Jos Buttler", "Kagiso Rabada", "Jason Holder", "Tom Banton", "Luke Wood", "Azmatullah Omarzai",
-        "Finn Allen", "Tim Seifert", "Rovman Powell", "Cameron Green", "Mustafizur Rahman", "Matheesha Pathirana", "Rachin Ravindra", "Sunil Narine", "Andre Russell",
-        "Nicholas Pooran", "Aiden Markram", "Mitchell Marsh", "Josh Inglis", "Wanindu Hasaranga", "Anrich Nortje", "Matthew Breetzke",
-        "Will Jacks", "Quinton de Kock", "Ryan Rickelton", "Sherfane Rutherford", "Corbin Bosch", "AM Ghazanfar", "Tim David",
-        "Marcus Stoinis", "Lockie Ferguson", "Marco Jansen", "Xavier Bartlett", "Ben Dwarshuis", "Cooper Connolly",
-        "Jofra Archer", "Kwena Maphaka", "Lhuan-Dre Pretorius", "Nandre Burger", "Shimron Hetmyer", "Donovan Ferreira", "Adam Milne",
-        "Phil Salt", "Romario Shepherd", "Jacob Bethell", "Nuwan Thushara", "Jacob Duffy", "Jordan Cox", "Glenn Maxwell", "Faf du Plessis",
-        "Pat Cummins", "Travis Head", "Heinrich Klaasen", "Kamindu Mendis", "Brydon Carse", "Eshan Malinga", "Liam Livingstone", "Jack Edwards",
-        "Sam Curran", "Mitchell Santner", "Kane Williamson", "Trent Boult", "Daryl Mitchell", "Gerald Coetzee", "Harry Brook"
-    ];
-
-    // ================= RETENTION MANAGER (FIXED) =================
+    // ================= RETENTION MANAGER (FIXED OVERSEAS) =================
     class RetentionManager {
         constructor() { 
             this.selected = []; 
             this.renderCSKSelection(); 
+            // Manual list of Overseas players appearing in retention rosters to fix detection issues
+            this.KNOWN_OVERSEAS = [
+                "Noor Ahmad", "Nathan Ellis", "Jamie Overton", "Akeal Hosein", "Matt Henry", "Matthew Short", "Zak Foulkes", "Dewald Brevis",
+                "Mitchell Starc", "David Miller", "Ben Duckett", "Lungi Ngidi", "Kyle Jamieson", "Pathum Nissanka", "Tristan Stubbs",
+                "Rashid Khan", "Jos Buttler", "Kagiso Rabada", "Jason Holder", "Tom Banton", "Luke Wood", "Azmatullah Omarzai",
+                "Finn Allen", "Tim Seifert", "Rovman Powell", "Cameron Green", "Mustafizur Rahman", "Matheesha Pathirana", "Rachin Ravindra", "Sunil Narine", "Andre Russell",
+                "Nicholas Pooran", "Aiden Markram", "Mitchell Marsh", "Josh Inglis", "Wanindu Hasaranga", "Anrich Nortje", "Matthew Breetzke",
+                "Will Jacks", "Quinton de Kock", "Ryan Rickelton", "Sherfane Rutherford", "Corbin Bosch", "AM Ghazanfar", "Tim David",
+                "Marcus Stoinis", "Lockie Ferguson", "Marco Jansen", "Xavier Bartlett", "Ben Dwarshuis", "Cooper Connolly",
+                "Jofra Archer", "Kwena Maphaka", "Lhuan-Dre Pretorius", "Nandre Burger", "Shimron Hetmyer", "Donovan Ferreira", "Adam Milne",
+                "Phil Salt", "Romario Shepherd", "Jacob Bethell", "Nuwan Thushara", "Jacob Duffy", "Jordan Cox", "Glenn Maxwell", "Faf du Plessis",
+                "Pat Cummins", "Travis Head", "Heinrich Klaasen", "Kamindu Mendis", "Brydon Carse", "Eshan Malinga", "Liam Livingstone", "Jack Edwards"
+            ];
         }
 
         renderCSKSelection() {
@@ -531,7 +529,7 @@
             }
 
             // 2. Fallback: Check explicitly against known Overseas list if not detected above
-            if(!isOverseas && KNOWN_OVERSEAS_PLAYERS.some(osName => rawName.includes(osName))) {
+            if(!isOverseas && this.KNOWN_OVERSEAS.some(osName => rawName.includes(osName))) {
                 country = "✈️ Overseas"; 
                 isOverseas = true;
             }
@@ -564,7 +562,7 @@
     }
     const retentionManager = new RetentionManager();
 
-    // ================= AUCTION ENGINE =================
+    // ================= AUCTION ENGINE (FIXED BUDGETING) =================
     class Game {
         constructor() {
             this.qIndex = -1; this.currentBid = 0; this.holder = null; this.timer = 10; this.interval = null; this.aiTimeout = null; this.sold = false; this.isPaused = false;
@@ -589,30 +587,24 @@
                     if(isRetained) return;
 
                     let name = cleanName; let country = "🇮🇳 India"; let isOverseas = false;
-                    
-                    // FIXED: Check known list for auction players as well
-                    if (rawName.includes("Overseas") || rawName.includes("Australia") || rawName.includes("England") || rawName.includes("South Africa") || rawName.includes("Afghanistan") || KNOWN_OVERSEAS_PLAYERS.some(k => rawName.includes(k))) { 
-                        country = "✈️ Overseas"; isOverseas = true; 
-                    }
+                    if (rawName.includes("Overseas") || rawName.includes("Australia") || rawName.includes("England") || rawName.includes("South Africa") || rawName.includes("Afghanistan")) { country = "✈️ Overseas"; isOverseas = true; }
                     
                     let rating = set.rating;
                     if(rawName.includes("Rating:")) rating = parseInt(rawName.split("Rating:")[1].replace("]","").trim());
 
+                    // FIXED: Lower base valuations to prevent early depletion
                     let marketValue = 0.5;
-                    if(rating === 5) marketValue = 11 + (Math.random() * 12);
-                    else if(rating === 4) marketValue = 5 + (Math.random() * 8);
-                    else if(rating === 3) marketValue = 2 + (Math.random() * 4);
-                    else if(rating === 2) marketValue = 0.5 + (Math.random() * 2);
-                    else marketValue = 0.2 + (Math.random() * 0.5);
+                    if(rating === 5) marketValue = 9 + (Math.random() * 8); // Was 11+12
+                    else if(rating === 4) marketValue = 3 + (Math.random() * 6); // Was 5+8
+                    else if(rating === 3) marketValue = 1 + (Math.random() * 3); // Was 2+4
+                    else if(rating === 2) marketValue = 0.4 + (Math.random() * 1.5);
+                    else marketValue = 0.2 + (Math.random() * 0.4);
 
                     let form = "Normal";
-                    // Hidden Mechanic: Player Form affects Market Value internally
-                    if(rating < 5 && Math.random() < 0.4) { form = "❄️ Cold"; marketValue *= 0.5; }
+                    if(rating < 5 && Math.random() < 0.3) { form = "❄️ Cold"; marketValue *= 0.6; }
                     
-                    // IMPROVED IMAGE FALLBACK LOGIC
                     let img = PLAYER_IMAGES[name];
                     if(!img) {
-                        // Use a reliable avatar generator if specific image not found
                         img = `https://ui-avatars.com/api/?name=${name.replace(' ','+')}&size=256&background=0D47A1&color=fff&font-size=0.33&bold=true`;
                     }
 
@@ -643,34 +635,41 @@
             let isWar = Math.random() < 0.05;
             let isSteal = Math.random() > 0.90;
 
+            // Percentage of auction completed
+            let progress = this.qIndex / AUCTION_QUEUE.length;
+
             TEAMS.forEach(t => {
                 if(t.isUser) return;
                 let v = p.marketValue;
                 
-                let progress = this.qIndex / AUCTION_QUEUE.length;
-                if(t.players.length < 18 && progress > 0.6) v *= 2.0; 
-                if(t.players.length < 15 && progress > 0.8) v *= 4.0;
+                // FIXED: Inflation control based on purse health
+                let purseHealth = t.purse / 120; // 1.0 is full, 0.1 is low
+                if(purseHealth < 0.3) v *= 0.7; // Be conservative if low on cash
+                if(purseHealth > 0.8 && p.r >= 4) v *= 1.3; // Spend big if rich and good player
 
+                // Needs logic
                 let need = t.needs[p.role];
-                if(need > 3) v *= 1.5;
-                else if(need <= 0) v *= 0.1;
+                if(need > 2) v *= 1.2;
+                else if(need <= 0) v *= 0.2; // Don't buy if not needed
 
-                if(t.purse < 5) v = 0; 
+                // Desperation Logic (Only kicks in late game)
+                if(t.players.length < 18 && progress > 0.75) v *= 2.0; 
+                if(t.players.length < 14 && progress > 0.90) v *= 5.0; // Panic buy
 
-                v *= (0.8 + Math.random()*0.4);
-                if(isWar && Math.random() > 0.8) v *= 2.0;
-                if(isSteal) v *= 0.3;
+                if(t.purse < 1) v = 0; 
+
+                v *= (0.9 + Math.random()*0.2); // Reduced random variance
+                if(isWar && p.r >= 4) v *= 1.5;
+                if(isSteal) v *= 0.5;
 
                 currentTeamValuations[t.id] = v;
             });
 
-            // HIDDEN STATE: Logic runs, but text is suppressed
-            if(isWar) eventText = ""; 
-            if(isSteal) eventText = ""; 
+            if(isWar && p.r >= 4) eventText = "🔥 EGO CLASH!";
+            else if(isSteal) eventText = "💤 SLEEPY MARKET...";
             
             document.getElementById('p-name').innerText = p.n; document.getElementById('p-role').innerText = p.role; document.getElementById('p-country').innerText = p.country; document.getElementById('p-set').innerText = p.setName; 
             
-            // Set Image with error handling
             const imgEl = document.getElementById('p-img');
             imgEl.src = p.img;
             imgEl.onerror = function() { 
@@ -678,8 +677,7 @@
                 this.src = `https://ui-avatars.com/api/?name=${p.n.replace(' ','+')}&size=256&background=000&color=fff`; 
             };
 
-            // HIDDEN STATE: Removed (${p.form}) from display
-            this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = `Base Price`; this.ui.leaderText.style.color = "#888"; this.ui.leaderLogo.style.display = 'none'; this.ui.stamp.classList.remove('active');
+            this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = `Base Price (${p.form})`; this.ui.leaderText.style.color = "#888"; this.ui.leaderLogo.style.display = 'none'; this.ui.stamp.classList.remove('active');
             this.ui.bidBtn.style.display = 'flex'; this.ui.simPlayerBtn.style.display = 'flex'; this.ui.simSetBtn.style.display = 'flex'; this.ui.passBtn.style.display = 'block'; this.ui.pauseBtn.style.display = 'block'; this.ui.nextBtn.style.display = 'none';
             this.ui.pauseBtn.innerText = "⏸"; this.ui.pauseBtn.classList.remove('active'); this.ui.timer.classList.remove('paused'); this.ui.timer.classList.remove('critical');
             this.ui.feed.innerHTML = eventText ? `<div class="feed-item"><span class="event-text">${eventText}</span></div>` : '';
@@ -706,32 +704,62 @@
             this.aiTimeout = setTimeout(() => this.processAIBid(), delay); 
         }
 
-        canTeamBid(team, amt, player) { if(team.purse < amt) return false; if(team.players.length >= 25) return false; if(player.isOverseas) { const osCount = team.players.filter(p => p.isOverseas).length; if(osCount >= 8) return false; } return true; }
+        // FIXED: New function to enforce budget reservation
+        getMaxAffordableBid(team) {
+            let squadSize = team.players.length;
+            let needed = 18 - squadSize;
+            if (needed <= 0) return team.purse; // Met min requirements, can spend all
+
+            // We must reserve at least 0.30 Cr (safe buffer) for every OTHER player needed
+            // If I need 1 player (this one), reserve 0.
+            // If I need 3 players, I can bid now, but must save for the other 2.
+            let reserveFunds = (needed - 1) * 0.30; 
+            let maxBid = team.purse - reserveFunds;
+            return maxBid > 0 ? maxBid : 0;
+        }
+
+        canTeamBid(team, amt, player) { 
+            if(team.players.length >= 25) return false; 
+            if(player.isOverseas) { const osCount = team.players.filter(p => p.isOverseas).length; if(osCount >= 8) return false; } 
+            
+            // Check budget against reservation
+            let maxAffordable = this.getMaxAffordableBid(team);
+            if (amt > maxAffordable) return false;
+
+            return true; 
+        }
 
         processAIBid() {
             if(this.sold || this.isPaused) return;
             const p = AUCTION_QUEUE[this.qIndex];
             
-            // Jump Bids
             let jump = 0;
             if(Math.random() < 0.1 && this.currentBid > 2) jump = 1.0; 
             let nextBid = this.getNextBid() + jump;
             
             const interested = TEAMS.filter(t => {
                 if(t.isUser || t.id === this.holder) return false;
-                if(!this.canTeamBid(t, nextBid, p)) return false;
+                if(!this.canTeamBid(t, nextBid, p)) return false; // Strict budget check
                 let maxVal = currentTeamValuations[t.id] || 0;
                 return nextBid <= maxVal;
             });
             
-            // --- MANDATORY FILL LOGIC (Live Bidding) ---
+            // Logic to force sale if unsold but teams have slots and money
             if(interested.length === 0 && this.holder === null) {
-                // If unsold, check if any team has < 18 players
-                const desperate = TEAMS.filter(t => !t.isUser && t.players.length < 18 && this.canTeamBid(t, nextBid, p));
+                // If unsold, find a team that needs this role and can afford base
+                const desperate = TEAMS.filter(t => 
+                    !t.isUser && 
+                    t.players.length < 18 && 
+                    t.needs[p.role] > 0 &&
+                    this.canTeamBid(t, nextBid, p)
+                );
+                
                 if(desperate.length > 0) {
-                    // Pick random desperate team
-                    this.bid(desperate[Math.floor(Math.random()*desperate.length)].id, nextBid);
-                    return;
+                    // 50% chance someone picks them up at base price if they need the role
+                    if(Math.random() > 0.5) {
+                        this.bid(desperate[Math.floor(Math.random()*desperate.length)].id, nextBid);
+                        return;
+                    }
                 }
             }
 
@@ -750,7 +778,10 @@
         bid(teamId, customAmt = null) {
             if(this.sold) return;
             const team = TEAMS.find(t => t.id === teamId); const amt = customAmt || ((this.holder) ? this.getNextBid() : this.currentBid);
+            
+            // Final safety check
             if(!this.canTeamBid(team, amt, AUCTION_QUEUE[this.qIndex])) return;
+
             this.currentBid = amt; this.holder = teamId; this.timer = 10;
             this.ui.price.innerText = `₹ ${this.currentBid.toFixed(2)} Cr`; this.ui.leaderText.innerText = team.name; this.ui.leaderText.style.color = team.color; this.ui.leaderLogo.src = team.logo; this.ui.leaderLogo.style.display = 'block';
             this.updateBidBtn();
@@ -767,11 +798,13 @@
             let loops = 0;
             const p = AUCTION_QUEUE[this.qIndex];
             
+            // Recalculate valuations for SIM if not set
             if(Object.keys(currentTeamValuations).length === 0) {
                 TEAMS.forEach(t => {
                     if(!t.isUser) {
                           let v = p.marketValue * (0.5 + Math.random() * 1.0);
-                          if(t.players.length < 18) v *= 2.0; 
+                          // Reduce valuation if low on funds
+                          if(this.getMaxAffordableBid(t) < 2.0) v *= 0.5;
                           currentTeamValuations[t.id] = v;
                     }
                 });
@@ -787,8 +820,12 @@
 
                 if(candidates.length === 0) {
                     if(!this.holder) {
-                         // FORCE BUY IN SIM
-                         const desperate = TEAMS.filter(t => !t.isUser && t.players.length < 18 && this.canTeamBid(t, next, p));
+                         // FORCE BUY IN SIM (ONLY IF NEEDED AND AFFORDABLE)
+                         const desperate = TEAMS.filter(t => 
+                            !t.isUser && 
+                            t.players.length < 18 && 
+                            this.canTeamBid(t, next, p)
+                         );
                          if(desperate.length > 0) {
                              this.currentBid = next; this.holder = desperate[Math.floor(Math.random()*desperate.length)].id; break;
                          }
@@ -817,7 +854,9 @@
                 TEAMS.forEach(t => {
                    if(!t.isUser) {
                        let v = nextP.marketValue * (0.5 + Math.random() * 1.0);
-                       if(t.players.length < 18) v *= 3.0; // Aggressive
+                       // Sim logic: reduce spending power if needed
+                       let maxAff = this.getMaxAffordableBid(t);
+                       if(maxAff < 2) v = Math.min(v, maxAff);
                        simValuations[t.id] = v;
                    }
                 });
@@ -874,6 +913,11 @@
             this.ui.bidAmt.innerText = `₹ ${next.toFixed(2)} Cr`;
             let disabled = false; let msg = "BID NOW";
             if(this.holder === 'CSK') { disabled = true; msg = "YOU LEAD"; } else if(csk.purse < next) { disabled = true; msg = "NO FUNDS"; } else if(csk.players.length >= 25) { disabled = true; msg = "SQUAD FULL"; } else if(p.isOverseas) { const os = csk.players.filter(x => x.isOverseas).length; if(os >= 8) { disabled = true; msg = "OS LIMIT"; } }
+            
+            // Check User Budget constraint too
+            let maxAff = this.getMaxAffordableBid(csk);
+            if(next > maxAff) { disabled = true; msg = "SAVE 💰 FOR 18"; }
+
             this.ui.bidBtn.disabled = disabled; this.ui.bidBtn.style.opacity = disabled ? "0.5" : "1"; document.getElementById('btn-main-text').innerText = msg;
         }
         openSquads() { showModal('squads-modal'); }
